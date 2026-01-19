@@ -1,0 +1,127 @@
+---
+import { getCollection } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+
+// Get all blog posts sorted by date (newest first)
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3); // Show only the 3 most recent posts
+---
+
+<section
+  id="journal"
+  class="bg-card py-24 md:py-32 md:pl-24"
+>
+  <div class="max-w-7xl mx-auto px-8 md:px-16">
+    <!-- Section Header -->
+    <div class="flex items-end justify-between mb-16 md:mb-20">
+      <div 
+        class="journal-header transition-all duration-700 opacity-0 translate-y-4"
+        data-animate="fade-in"
+      >
+        <span class="text-[10px] tracking-[0.4em] uppercase text-muted-foreground block mb-4">
+          Thoughts & Updates
+        </span>
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-light text-foreground">
+          Journal
+        </h2>
+      </div>
+      <a 
+        href="/blog"
+        class="journal-link hidden md:block text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-all duration-300 opacity-0"
+        data-animate="fade-in"
+      >
+        View All Entries
+      </a>
+    </div>
+
+    <!-- Journal Entries -->
+    <div class="space-y-0 divide-y divide-border">
+      {posts.map((post, index) => (
+        <article
+          class="journal-entry group cursor-pointer py-10 md:py-12 first:pt-0 transition-all duration-700 opacity-0 translate-y-8"
+          style={`transition-delay: ${200 + index * 150}ms;`}
+          data-animate="fade-in"
+        >
+          <a href={`/blog/${post.id}/`} class="block">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
+              <!-- Date -->
+              <div class="md:col-span-3 flex md:flex-col gap-4 md:gap-2">
+                <span class="text-xs text-muted-foreground">
+                  <FormattedDate date={post.data.pubDate} />
+                </span>
+                <span class="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/60">
+                  Blog
+                </span>
+              </div>
+
+              <!-- Content -->
+              <div class="md:col-span-9">
+                <h3 class="text-xl md:text-2xl font-light text-foreground group-hover:text-accent transition-colors mb-4">
+                  {post.data.title}
+                </h3>
+                <p class="text-sm md:text-base text-muted-foreground leading-relaxed line-clamp-2">
+                  {post.data.description}
+                </p>
+                <span class="inline-block mt-6 text-xs tracking-[0.2em] uppercase text-muted-foreground/60 group-hover:text-foreground transition-colors">
+                  Read More
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+      ))}
+    </div>
+
+    <!-- Mobile View All Link -->
+    <div class="mt-12 md:hidden text-center">
+      <a 
+        href="/blog"
+        class="text-xs tracking-[0.2em] uppercase text-muted-foreground hover:text-foreground transition-colors"
+      >
+        View All Entries
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // IntersectionObserver for fade-in animations
+  const journalSection = document.getElementById('journal');
+  const journalHeader = document.querySelector('.journal-header');
+  const journalLink = document.querySelector('.journal-link');
+  const journalEntries = document.querySelectorAll('.journal-entry');
+  
+  if (journalSection) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Animate header
+            if (journalHeader) {
+              journalHeader.classList.remove('opacity-0', 'translate-y-4');
+              journalHeader.classList.add('opacity-100', 'translate-y-0');
+            }
+            
+            // Animate link
+            if (journalLink) {
+              journalLink.classList.remove('opacity-0');
+              journalLink.classList.add('opacity-100');
+            }
+            
+            // Animate entries with stagger
+            journalEntries.forEach((entryEl) => {
+              entryEl.classList.remove('opacity-0', 'translate-y-8');
+              entryEl.classList.add('opacity-100', 'translate-y-0');
+            });
+            
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    
+    observer.observe(journalSection);
+  }
+</script>

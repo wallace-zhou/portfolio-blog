@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import gallery1 from '../assets/blog-placeholder-1.jpg';
+import gallery2 from '../assets/blog-placeholder-2.jpg';
+import gallery3 from '../assets/blog-placeholder-3.jpg';
+import gallery4 from '../assets/blog-placeholder-4.jpg';
+import gallery5 from '../assets/blog-placeholder-5.jpg';
+import gallery6 from '../assets/blog-placeholder-about.jpg';
+
+const galleryImages = [
+  { src: gallery1, alt: "Portrait in dramatic lighting" },
+  { src: gallery2, alt: "Minimalist architecture" },
+  { src: gallery3, alt: "Misty forest at dawn" },
+  { src: gallery4, alt: "Still life with ceramics" },
+  { src: gallery5, alt: "Urban street scene" },
+  { src: gallery6, alt: "Serene ocean seascape" },
+];
+---
+
+<section 
+  id="work"
+  class="relative min-h-screen w-full overflow-hidden bg-foreground"
+>
+  <!-- Top Logo - Small and Centered on entire page -->
+  <div 
+    id="hero-top-logo"
+    class="absolute top-8 left-0 right-0 z-20 flex justify-center"
+  >
+    <a 
+      href="#"
+      class="hero-logo text-lg md:text-xl font-light text-background/80 hover:text-background transition-all duration-700 opacity-0 -translate-y-4 font-chinese"
+    >
+      光影詩
+    </a>
+  </div>
+
+  <!-- Photo Grid Gallery -->
+  <div 
+    id="hero-gallery"
+    class="pt-24 pb-16 md:pb-24 px-4 md:pl-28 md:pr-8"
+  >
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 max-w-7xl mx-auto">
+      {galleryImages.map((image, index) => (
+        <div 
+          class:list={[
+            "gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8",
+            (index === 0 || index === 5) ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5]"
+          ]}
+          style={`transition-delay: ${index * 100}ms;`}
+          data-index={index}
+        >
+          <Image
+            src={image.src}
+            alt={image.alt}
+            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            quality="mid"
+            widths={[400, 800, 1200]}
+            sizes="(max-width: 768px) 50vw, 33vw"
+            loading={index < 3 ? "eager" : "lazy"}
+          />
+          <!-- Hover overlay -->
+          <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-500"></div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  // Parallax effect and fade-in animation
+  const heroGallery = document.getElementById('hero-gallery');
+  const heroTopLogo = document.getElementById('hero-top-logo');
+  const heroLogo = document.querySelector('.hero-logo');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+
+  // Initial fade-in animation
+  function initFadeIn() {
+    setTimeout(() => {
+      if (heroLogo) {
+        heroLogo.classList.remove('opacity-0', '-translate-y-4');
+        heroLogo.classList.add('opacity-100', 'translate-y-0');
+      }
+      
+      galleryItems.forEach((item) => {
+        item.classList.remove('opacity-0', 'translate-y-8');
+        item.classList.add('opacity-100', 'translate-y-0');
+      });
+    }, 100);
+  }
+
+  // Parallax scroll effect
+  function handleScroll() {
+    const scrollY = window.scrollY;
+    const parallaxOffset = scrollY * 0.3;
+    const logoOpacity = Math.max(0, 1 - scrollY / 600);
+
+    if (heroGallery) {
+      heroGallery.style.transform = `translateY(-${parallaxOffset}px)`;
+    }
+
+    if (heroTopLogo) {
+      heroTopLogo.style.opacity = logoOpacity.toString();
+    }
+  }
+
+  // Event listeners
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  // Initialize
+  initFadeIn();
+  handleScroll();
+</script>

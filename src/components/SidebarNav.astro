@@ -1,0 +1,219 @@
+---
+const navLinks = [
+  { label: "Work", href: "#work" },
+  { label: "Journal", href: "#journal" },
+  { label: "About", href: "#about" },
+  { label: "Contact", href: "#contact" },
+];
+---
+
+<!-- Desktop Sidebar -->
+<nav 
+  id="desktop-nav"
+  class="fixed left-0 top-0 h-screen w-20 md:w-24 z-50 hidden md:flex flex-col items-center py-8 transition-colors duration-500 bg-transparent"
+>
+  <!-- Logo - only visible after scrolling past hero -->
+  <a 
+    href="#"
+    id="nav-logo"
+    class="text-2xl font-light transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none text-background font-chinese"
+  >
+    光
+  </a>
+
+  <!-- Horizontal Nav Links - positioned in upper half -->
+  <div class="mt-12 flex flex-col items-center gap-6">
+    {navLinks.map((link) => (
+      <a
+        href={link.href}
+        class="nav-link text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:opacity-100 text-background/70 hover:text-background"
+      >
+        {link.label}
+      </a>
+    ))}
+  </div>
+
+  <!-- Scroll Indicator - at bottom, disappears on scroll -->
+  <div 
+    id="scroll-indicator"
+    class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 transition-all duration-500 opacity-100"
+  >
+    <div class="w-px h-12 bg-background/30 relative overflow-hidden">
+      <div class="absolute w-full h-4 bg-background/80 animate-scroll-line"></div>
+    </div>
+    <span class="text-[9px] tracking-[0.3em] uppercase text-background/40">
+      Scroll
+    </span>
+  </div>
+</nav>
+
+<!-- Mobile Header -->
+<header id="mobile-header" class="fixed top-0 left-0 right-0 z-50 md:hidden">
+  <div id="mobile-header-bg" class="flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
+    <!-- Logo - only visible after scrolling past hero -->
+    <a 
+      href="#"
+      id="mobile-logo"
+      class="text-2xl font-light text-background transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none font-chinese"
+    >
+      光
+    </a>
+
+    <!-- Menu Toggle -->
+    <button 
+      id="menu-toggle"
+      class="text-background p-2"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+    >
+      <div class="w-6 flex flex-col gap-1.5">
+        <span id="menu-line-1" class="block h-px bg-current transition-transform duration-300"></span>
+        <span id="menu-line-2" class="block h-px bg-current transition-opacity duration-300"></span>
+        <span id="menu-line-3" class="block h-px bg-current transition-transform duration-300"></span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu" class="fixed inset-0 bg-foreground transition-transform duration-500 translate-x-full">
+    <div class="flex flex-col items-center justify-center h-full gap-8">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-nav-link text-2xl tracking-[0.2em] uppercase text-background/80 hover:text-background transition-colors"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  // Scroll detection for nav background and logo visibility
+  const desktopNav = document.getElementById('desktop-nav');
+  const navLogo = document.getElementById('nav-logo');
+  const scrollIndicator = document.getElementById('scroll-indicator');
+  const mobileHeaderBg = document.getElementById('mobile-header-bg');
+  const mobileLogo = document.getElementById('mobile-logo');
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuLine1 = document.getElementById('menu-line-1');
+  const menuLine2 = document.getElementById('menu-line-2');
+  const menuLine3 = document.getElementById('menu-line-3');
+  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+  let isMobileMenuOpen = false;
+
+  function handleScroll() {
+    const scrollY = window.scrollY;
+    const isScrolled = scrollY > 100;
+    const showLogo = scrollY > 60;
+
+    // Desktop nav background
+    if (desktopNav) {
+      if (isScrolled) {
+        desktopNav.classList.remove('bg-transparent');
+        desktopNav.classList.add('bg-foreground');
+      } else {
+        desktopNav.classList.remove('bg-foreground');
+        desktopNav.classList.add('bg-transparent');
+      }
+    }
+
+    // Desktop logo visibility
+    if (navLogo) {
+      if (showLogo) {
+        navLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        navLogo.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        navLogo.classList.remove('opacity-100', 'translate-y-0');
+        navLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      }
+    }
+
+    // Scroll indicator visibility
+    if (scrollIndicator) {
+      if (showLogo) {
+        scrollIndicator.classList.remove('opacity-100');
+        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        scrollIndicator.classList.remove('opacity-0', 'pointer-events-none');
+        scrollIndicator.classList.add('opacity-100');
+      }
+    }
+
+    // Mobile header background
+    if (mobileHeaderBg) {
+      if (isScrolled) {
+        mobileHeaderBg.classList.remove('bg-transparent');
+        mobileHeaderBg.classList.add('bg-foreground');
+      } else {
+        mobileHeaderBg.classList.remove('bg-foreground');
+        mobileHeaderBg.classList.add('bg-transparent');
+      }
+    }
+
+    // Mobile logo visibility
+    if (mobileLogo) {
+      if (showLogo) {
+        mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        mobileLogo.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        mobileLogo.classList.remove('opacity-100', 'translate-y-0');
+        mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      }
+    }
+  }
+
+  function toggleMobileMenu() {
+    isMobileMenuOpen = !isMobileMenuOpen;
+    
+    if (menuToggle) {
+      menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
+    }
+
+    if (mobileMenu) {
+      if (isMobileMenuOpen) {
+        mobileMenu.classList.remove('translate-x-full');
+        mobileMenu.classList.add('translate-x-0');
+      } else {
+        mobileMenu.classList.remove('translate-x-0');
+        mobileMenu.classList.add('translate-x-full');
+      }
+    }
+
+    // Animate menu icon
+    if (menuLine1 && menuLine2 && menuLine3) {
+      if (isMobileMenuOpen) {
+        menuLine1.classList.add('rotate-45', 'translate-y-2');
+        menuLine2.classList.add('opacity-0');
+        menuLine3.classList.add('-rotate-45', '-translate-y-2');
+      } else {
+        menuLine1.classList.remove('rotate-45', 'translate-y-2');
+        menuLine2.classList.remove('opacity-0');
+        menuLine3.classList.remove('-rotate-45', '-translate-y-2');
+      }
+    }
+  }
+
+  function closeMobileMenu() {
+    if (isMobileMenuOpen) {
+      toggleMobileMenu();
+    }
+  }
+
+  // Event listeners
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  if (menuToggle) {
+    menuToggle.addEventListener('click', toggleMobileMenu);
+  }
+
+  mobileNavLinks.forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Initial state
+  handleScroll();
+</script>
