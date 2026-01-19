@@ -7,22 +7,32 @@ const navLinks = [
 ];
 ---
 
+<style>
+  #nav-logo img {
+    filter: brightness(0) invert(1);
+  }
+</style>
+
 <!-- Desktop Sidebar -->
 <nav 
   id="desktop-nav"
-  class="fixed left-0 top-0 h-screen w-20 md:w-24 z-50 hidden md:flex flex-col items-center py-8 transition-colors duration-500 bg-transparent"
+  class="fixed left-0 top-0 h-screen w-20 md:w-fit z-50 hidden md:flex flex-col items-center py-8 transition-colors duration-500 bg-transparent"
 >
   <!-- Logo - only visible after scrolling past hero -->
   <a 
     href="#"
     id="nav-logo"
-    class="text-2xl font-light transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none text-background font-chinese"
+    class="absolute top-8 left-1/2 -translate-x-1/2 transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none"
   >
-    光
+    <img
+      src="/logo-z.svg"
+      alt="周庭徵 signature logo"
+      class="h-20 md:h-24 w-auto"
+    />
   </a>
 
   <!-- Horizontal Nav Links - positioned in upper half -->
-  <div class="mt-12 flex flex-col items-center gap-6">
+  <div class="mt-32 md:mt-32 px-4 flex flex-col items-center gap-6">
     {navLinks.map((link) => (
       <a
         href={link.href}
@@ -114,9 +124,9 @@ const navLinks = [
     if (desktopNav) {
       if (isScrolled) {
         desktopNav.classList.remove('bg-transparent');
-        desktopNav.classList.add('bg-foreground');
+        desktopNav.classList.add('bg-primary');
       } else {
-        desktopNav.classList.remove('bg-foreground');
+        desktopNav.classList.remove('bg-primary');
         desktopNav.classList.add('bg-transparent');
       }
     }
@@ -147,9 +157,9 @@ const navLinks = [
     if (mobileHeaderBg) {
       if (isScrolled) {
         mobileHeaderBg.classList.remove('bg-transparent');
-        mobileHeaderBg.classList.add('bg-foreground');
+        mobileHeaderBg.classList.add('bg-primary');
       } else {
-        mobileHeaderBg.classList.remove('bg-foreground');
+        mobileHeaderBg.classList.remove('bg-primary');
         mobileHeaderBg.classList.add('bg-transparent');
       }
     }
