@@ -112,13 +112,68 @@ const navLinks = [
   const menuLine2 = document.getElementById('menu-line-2');
   const menuLine3 = document.getElementById('menu-line-3');
   const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+  const heroTopLogo = document.getElementById('hero-top-logo');
 
   let isMobileMenuOpen = false;
+  let isHeroLogoVisible = true;
+
+  // Use Intersection Observer to detect when hero logo is out of view
+  if (heroTopLogo) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isHeroLogoVisible = entry.isIntersecting;
+          updateNavLogoVisibility();
+        });
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px'
+      }
+    );
+    observer.observe(heroTopLogo);
+  }
+
+  function updateNavLogoVisibility() {
+    const showNavLogo = !isHeroLogoVisible;
+
+    // Desktop logo visibility - only show when hero logo is not visible
+    if (navLogo) {
+      if (showNavLogo) {
+        navLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        navLogo.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        navLogo.classList.remove('opacity-100', 'translate-y-0');
+        navLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      }
+    }
+
+    // Mobile logo visibility - only show when hero logo is not visible
+    if (mobileLogo) {
+      if (showNavLogo) {
+        mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        mobileLogo.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        mobileLogo.classList.remove('opacity-100', 'translate-y-0');
+        mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      }
+    }
+
+    // Scroll indicator visibility - hide when nav logo shows
+    if (scrollIndicator) {
+      if (showNavLogo) {
+        scrollIndicator.classList.remove('opacity-100');
+        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        scrollIndicator.classList.remove('opacity-0', 'pointer-events-none');
+        scrollIndicator.classList.add('opacity-100');
+      }
+    }
+  }
 
   function handleScroll() {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
-    const showLogo = scrollY > 60;
 
     // Desktop nav background
     if (desktopNav) {
@@ -131,28 +186,6 @@ const navLinks = [
       }
     }
 
-    // Desktop logo visibility
-    if (navLogo) {
-      if (showLogo) {
-        navLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
-        navLogo.classList.add('opacity-100', 'translate-y-0');
-      } else {
-        navLogo.classList.remove('opacity-100', 'translate-y-0');
-        navLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
-      }
-    }
-
-    // Scroll indicator visibility
-    if (scrollIndicator) {
-      if (showLogo) {
-        scrollIndicator.classList.remove('opacity-100');
-        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
-      } else {
-        scrollIndicator.classList.remove('opacity-0', 'pointer-events-none');
-        scrollIndicator.classList.add('opacity-100');
-      }
-    }
-
     // Mobile header background
     if (mobileHeaderBg) {
       if (isScrolled) {
@@ -161,17 +194,6 @@ const navLinks = [
       } else {
         mobileHeaderBg.classList.remove('bg-primary');
         mobileHeaderBg.classList.add('bg-transparent');
-      }
-    }
-
-    // Mobile logo visibility
-    if (mobileLogo) {
-      if (showLogo) {
-        mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
-        mobileLogo.classList.add('opacity-100', 'translate-y-0');
-      } else {
-        mobileLogo.classList.remove('opacity-100', 'translate-y-0');
-        mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
       }
     }
   }
@@ -226,4 +248,5 @@ const navLinks = [
 
   // Initial state
   handleScroll();
+  updateNavLogoVisibility();
 </script>
