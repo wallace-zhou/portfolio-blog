@@ -19,7 +19,8 @@ const galleryImages = [
 
 <section 
   id="work"
-  class="relative min-h-screen w-full overflow-hidden bg-foreground"
+  class="relative w-full overflow-hidden bg-primary"
+  style="height: fit-content;"
 >
   <!-- Top Logo - Small and Centered on entire page -->
   <div 
@@ -28,38 +29,35 @@ const galleryImages = [
   >
     <a 
       href="#"
-      class="hero-logo text-lg md:text-xl font-light text-background/80 hover:text-background transition-all duration-700 opacity-0 -translate-y-4 font-chinese"
+      class="hero-logo text-4xl md:text-5xl font-light text-background/80 hover:text-background transition-all duration-700 opacity-0 -translate-y-4 font-chinese"
     >
-      光影詩
+      周庭徵
     </a>
   </div>
 
   <!-- Photo Grid Gallery -->
   <div 
     id="hero-gallery"
-    class="pt-24 pb-16 md:pb-24 px-4 md:pl-28 md:pr-8"
+    class="pt-28 pb-0 px-2 md:pl-32 md:pr-4"
   >
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 max-w-7xl mx-auto">
+    <div class="columns-1 md:columns-3 gap-4 md:gap-6 w-full mb-0">
       {galleryImages.map((image, index) => (
         <div 
-          class:list={[
-            "gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8",
-            (index === 0 || index === 5) ? "md:col-span-2 aspect-[16/9]" : "aspect-[4/5]"
-          ]}
+          class="gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8 mb-4 md:mb-6 break-inside-avoid"
           style={`transition-delay: ${index * 100}ms;`}
           data-index={index}
         >
           <Image
             src={image.src}
             alt={image.alt}
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            class="w-full h-auto transition-transform duration-700 group-hover:scale-105"
             quality="mid"
             widths={[400, 800, 1200]}
             sizes="(max-width: 768px) 50vw, 33vw"
             loading={index < 3 ? "eager" : "lazy"}
           />
           <!-- Hover overlay -->
-          <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/20 transition-colors duration-500"></div>
+          <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-500"></div>
         </div>
       ))}
     </div>
@@ -67,8 +65,7 @@ const galleryImages = [
 </section>
 
 <script>
-  // Parallax effect and fade-in animation
-  const heroGallery = document.getElementById('hero-gallery');
+  // Individual image parallax and fade-in animation
   const heroTopLogo = document.getElementById('hero-top-logo');
   const heroLogo = document.querySelector('.hero-logo');
   const galleryItems = document.querySelectorAll('.gallery-item');
@@ -88,16 +85,12 @@ const galleryImages = [
     }, 100);
   }
 
-  // Parallax scroll effect
+  // Logo fade effect on scroll
   function handleScroll() {
     const scrollY = window.scrollY;
-    const parallaxOffset = scrollY * 0.3;
     const logoOpacity = Math.max(0, 1 - scrollY / 600);
 
-    if (heroGallery) {
-      heroGallery.style.transform = `translateY(-${parallaxOffset}px)`;
-    }
-
+    // Update logo opacity
     if (heroTopLogo) {
       heroTopLogo.style.opacity = logoOpacity.toString();
     }
