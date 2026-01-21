@@ -1,5 +1,5 @@
 /* Google Fonts - must be first */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Noto+Serif+SC:wght@300;400;500;600;700&family=Ma+Shan+Zheng&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700&family=Ma+Shan+Zheng&display=swap');
 
 @import "tailwindcss";
 
@@ -28,8 +28,8 @@
 }
 
 @theme inline {
-  --font-sans: 'Cormorant Garamond', 'Times New Roman', serif;
-  --font-serif: 'Cormorant Garamond', 'Times New Roman', serif;
+  --font-sans: Georgia, 'Times New Roman', serif;
+  --font-serif: Georgia, 'Times New Roman', serif;
   --font-chinese: 'Ma Shan Zheng', 'Noto Serif SC', cursive;
   --color-background: var(--background);
   --color-foreground: var(--foreground);

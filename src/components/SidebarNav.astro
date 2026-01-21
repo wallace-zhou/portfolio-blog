@@ -27,16 +27,16 @@ const navLinks = [
     <img
       src="/logo-z.svg"
       alt="周庭徵 signature logo"
-      class="h-20 md:h-24 w-auto"
+      class="h-12 md:h-16 w-auto"
     />
   </a>
 
   <!-- Horizontal Nav Links - positioned in upper half -->
-  <div class="mt-32 md:mt-32 px-4 flex flex-col items-center gap-6">
+  <div class="mt-32 md:mt-32 px-4 flex flex-col items-center gap-10">
     {navLinks.map((link) => (
       <a
         href={link.href}
-        class="nav-link text-xs tracking-[0.2em] uppercase transition-colors duration-300 hover:opacity-100 text-background/70 hover:text-background"
+        class="nav-link text-xs tracking-[0.2em] uppercase font-semibold transition-colors duration-300 hover:opacity-100 text-background/70 hover:text-background"
       >
         {link.label}
       </a>
@@ -59,17 +59,8 @@ const navLinks = [
 
 <!-- Mobile Header -->
 <header id="mobile-header" class="fixed top-0 left-0 right-0 z-50 md:hidden">
-  <div id="mobile-header-bg" class="flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
-    <!-- Logo - only visible after scrolling past hero -->
-    <a 
-      href="#"
-      id="mobile-logo"
-      class="text-2xl font-light text-background transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none font-chinese"
-    >
-      光
-    </a>
-
-    <!-- Menu Toggle -->
+  <div id="mobile-header-bg" class="relative z-10 flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
+    <!-- Menu Toggle - on the left -->
     <button 
       id="menu-toggle"
       class="text-background p-2"
@@ -82,15 +73,30 @@ const navLinks = [
         <span id="menu-line-3" class="block h-px bg-current transition-transform duration-300"></span>
       </div>
     </button>
+
+    <!-- Logo - only visible after scrolling past hero -->
+    <a 
+      href="#"
+      id="mobile-logo"
+      class="text-2xl font-light text-background transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none font-chinese"
+    >
+      光
+    </a>
   </div>
 
-  <!-- Mobile Menu Overlay -->
-  <div id="mobile-menu" class="fixed inset-0 bg-foreground transition-transform duration-500 translate-x-full">
-    <div class="flex flex-col items-center justify-center h-full gap-8">
+  <!-- Mobile Menu Backdrop -->
+  <div 
+    id="mobile-menu-backdrop" 
+    class="fixed inset-0 z-0 bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
+  ></div>
+
+  <!-- Mobile Menu Sidebar -->
+  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[5] bg-foreground transition-transform duration-500 -translate-x-full">
+    <div class="flex flex-col items-center justify-center h-full gap-12">
       {navLinks.map((link) => (
         <a
           href={link.href}
-          class="mobile-nav-link text-2xl tracking-[0.2em] uppercase text-background/80 hover:text-background transition-colors"
+          class="mobile-nav-link text-2xl tracking-[0.2em] uppercase font-semibold text-background/80 hover:text-background transition-colors"
         >
           {link.label}
         </a>
@@ -108,6 +114,7 @@ const navLinks = [
   const mobileLogo = document.getElementById('mobile-logo');
   const menuToggle = document.getElementById('menu-toggle');
   const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
   const menuLine1 = document.getElementById('menu-line-1');
   const menuLine2 = document.getElementById('menu-line-2');
   const menuLine3 = document.getElementById('menu-line-3');
@@ -205,13 +212,25 @@ const navLinks = [
       menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
     }
 
+    // Toggle sidebar (slides from left)
     if (mobileMenu) {
       if (isMobileMenuOpen) {
-        mobileMenu.classList.remove('translate-x-full');
+        mobileMenu.classList.remove('-translate-x-full');
         mobileMenu.classList.add('translate-x-0');
       } else {
         mobileMenu.classList.remove('translate-x-0');
-        mobileMenu.classList.add('translate-x-full');
+        mobileMenu.classList.add('-translate-x-full');
+      }
+    }
+
+    // Toggle backdrop overlay
+    if (mobileMenuBackdrop) {
+      if (isMobileMenuOpen) {
+        mobileMenuBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+        mobileMenuBackdrop.classList.add('opacity-100', 'pointer-events-auto');
+      } else {
+        mobileMenuBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
+        mobileMenuBackdrop.classList.add('opacity-0', 'pointer-events-none');
       }
     }
 
@@ -240,6 +259,11 @@ const navLinks = [
   
   if (menuToggle) {
     menuToggle.addEventListener('click', toggleMobileMenu);
+  }
+
+  // Close menu when clicking backdrop
+  if (mobileMenuBackdrop) {
+    mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
   }
 
   mobileNavLinks.forEach(link => {

@@ -37,26 +37,26 @@ const galleryImages = [
   <!-- Top Logo - Small and Centered on entire page -->
   <div 
     id="hero-top-logo"
-    class="absolute top-8 left-0 right-0 z-20 flex justify-center"
+    class="absolute top-[26px] left-0 right-0 z-20 flex justify-center"
   >
     <a
       href="#"
-      class="hero-logo transition-all duration-700 opacity-0 -translate-y-4"
+      class="hero-logo flex flex-col items-center transition-all duration-700 opacity-0 -translate-y-4"
       aria-label="周庭徵 logo"
     >
       <img
         src="/logo-ztz.svg"
         alt="周庭徵 signature logo"
-        class="h-20 md:h-24 w-auto logo-svg"
+        class="h-12 md:h-16 w-auto logo-svg"
       />
-      <span class="sr-only">周庭徵</span>
+      <span class="text-background text-lg md:text-xl tracking-[0.3em] uppercase mt-2">Wallace Zhou</span>
     </a>
   </div>
 
   <!-- Photo Grid Gallery -->
   <div 
     id="hero-gallery"
-    class="pt-36 md:pt-40 pb-0 px-2 md:pl-27 md:pr-4"
+    class="pt-[120px] md:pt-[138px] pb-0 px-2 md:pl-28 md:pr-4"
   >
     <div class="columns-1 md:columns-3 gap-4 md:gap-6 w-full mb-0">
       {galleryImages.map((image, index) => (
