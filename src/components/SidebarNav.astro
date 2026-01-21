@@ -165,22 +165,12 @@ const navLinks = [
         mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
       }
     }
-
-    // Scroll indicator visibility - hide when nav logo shows
-    if (scrollIndicator) {
-      if (showNavLogo) {
-        scrollIndicator.classList.remove('opacity-100');
-        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
-      } else {
-        scrollIndicator.classList.remove('opacity-0', 'pointer-events-none');
-        scrollIndicator.classList.add('opacity-100');
-      }
-    }
   }
 
   function handleScroll() {
     const scrollY = window.scrollY;
     const isScrolled = scrollY > 100;
+    const hasScrolled = scrollY > 0;
 
     // Desktop nav background
     if (desktopNav) {
@@ -201,6 +191,17 @@ const navLinks = [
       } else {
         mobileHeaderBg.classList.remove('bg-primary');
         mobileHeaderBg.classList.add('bg-transparent');
+      }
+    }
+
+    // Scroll indicator - hide immediately on any scroll
+    if (scrollIndicator) {
+      if (hasScrolled) {
+        scrollIndicator.classList.remove('opacity-100');
+        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        scrollIndicator.classList.remove('opacity-0', 'pointer-events-none');
+        scrollIndicator.classList.add('opacity-100');
       }
     }
   }
