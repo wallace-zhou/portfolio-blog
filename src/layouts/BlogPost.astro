@@ -20,7 +20,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<body class="bg-card">
 		<SidebarNav />
 		<Header />
-		<main class="overflow-x-hidden md:pl-24">
+		<main class="overflow-x-hidden md:pl-28">
 			<article class="pt-20 md:pt-8">
 				{heroImage && (
 					<div class="w-full max-w-4xl mx-auto px-4 md:px-8 mb-8">
@@ -36,7 +36,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				)}
 				<div class="max-w-3xl mx-auto px-4 md:px-8 pb-16">
 					<div class="mb-8 text-center">
-						<div class="text-sm text-muted-foreground mb-4">
+						<div class="text-small text-muted-foreground mb-4">
 							<FormattedDate date={pubDate} />
 							{
 								updatedDate && (
@@ -46,7 +46,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 								)
 							}
 						</div>
-						<h1 class="text-3xl md:text-4xl lg:text-5xl font-light text-foreground mb-6">{title}</h1>
+						<h1 class="text-display style-heading text-foreground mb-6">{title}</h1>
 						<hr class="border-border" />
 					</div>
 					<div class="prose prose-lg text-foreground/80 leading-relaxed">

@@ -25,6 +25,17 @@
   --input: oklch(0.94 0.03 70);
   --ring: oklch(0.12 0.05 155);
   --radius: 0.625rem;
+
+  /* Typography Scale - fluid sizing */
+  --text-xs: clamp(0.625rem, 0.5rem + 0.25vw, 0.75rem);     /* 10-12px: labels, captions */
+  --text-sm: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);     /* 12-14px: small text */
+  --text-base: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);      /* 14-16px: body text */
+  --text-lg: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);          /* 16-20px: large body */
+  --text-xl: clamp(1.125rem, 1rem + 0.6vw, 1.5rem);         /* 18-24px: small headings */
+  --text-2xl: clamp(1.25rem, 1rem + 1vw, 1.75rem);          /* 20-28px: entry titles */
+  --text-3xl: clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem);       /* 24-36px: section headers */
+  --text-4xl: clamp(2rem, 1.5rem + 2.5vw, 3.5rem);          /* 32-56px: page headings */
+  --text-5xl: clamp(2.5rem, 2rem + 3vw, 4.5rem);            /* 40-72px: hero text */
 }
 
 @theme inline {
@@ -62,6 +73,54 @@
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Typography utility classes - SIZE only */
+  .text-label { font-size: var(--text-xs); }
+  .text-small { font-size: var(--text-sm); }
+  .text-body { font-size: var(--text-base); }
+  .text-body-lg { font-size: var(--text-xl); }
+  .text-heading-sm { font-size: var(--text-xl); }
+  .text-heading { font-size: var(--text-2xl); }
+  .text-heading-lg { font-size: var(--text-3xl); }
+  .text-display { font-size: var(--text-4xl); }
+  .text-hero { font-size: var(--text-5xl); }
+
+  /* Font Style Classes - STYLE only (independent of size) */
+
+  /* Tracking variants */
+  .tracking-tight { letter-spacing: 0.05em; }
+  .tracking-normal { letter-spacing: 0.1em; }
+  .tracking-wide { letter-spacing: 0.2em; }
+  .tracking-wider { letter-spacing: 0.3em; }
+
+  /* Text style presets */
+  .style-label {
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+  }
+
+  .style-nav {
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+
+  .style-cta {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .style-category {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .style-heading {
+    font-weight: 300;
+  }
+
+  .style-heading-bold {
+    font-weight: 600;
   }
 }
 
