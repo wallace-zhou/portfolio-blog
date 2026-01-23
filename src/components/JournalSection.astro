@@ -44,7 +44,7 @@ const posts = (await getCollection('blog'))
             <div class="grid grid-cols-1 md:grid-cols-12 gap-6 md:gap-8 items-start">
               <!-- Date -->
               <div class="md:col-span-3 flex md:flex-col gap-4 md:gap-2">
-                <span class="text-body">
+                <span class="text-body tracking-normal">
                   <FormattedDate date={post.data.pubDate} />
                 </span>
                 <span class="text-body style-category text-muted-foreground/60">

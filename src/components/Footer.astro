@@ -8,20 +8,21 @@ const currentYear = new Date().getFullYear();
     <div class="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8">
       <!-- Brand & CTA -->
       <div class="md:col-span-6">
-        <h3 
-          class="text-hero style-heading text-background mb-8 font-chinese"
-        >
-          光影詩
-        </h3>
-        <p class="text-body-lg text-background/60 leading-relaxed max-w-md mb-10">
-          Available for collaborations, exhibitions, and commissioned work.
-        </p>
-        <a 
-          href="mailto:hello@example.com"
-          class="inline-block text-small style-cta text-background border-b border-background/30 pb-1 hover:border-background transition-colors"
-        >
-          Get in Touch
-        </a>
+        <div id="hero-top-logo" class="flex justify-center py-[26px]">
+          <a
+            href="/"
+            class="header-logo flex flex-col items-center transition-all duration-700"
+            aria-label="周庭徵 logo"
+          >
+            <img
+              src="/logo-ztz.svg"
+              alt="周庭徵 signature logo"
+              class="h-12 md:h-16 w-auto logo-svg"
+            />
+            <span class="text-background text-body-lg style-label mt-2">Wallace Z</span>
+          </a>
+        </div>
+        
       </div>
 
       <!-- Contact Info -->
@@ -31,46 +32,23 @@ const currentYear = new Date().getFullYear();
         </h4>
         <div class="space-y-4">
           <a 
-            href="mailto:hello@example.com" 
+            href="zhoutingzheng@gmail.com" 
             class="block text-body text-background/70 hover:text-background transition-colors"
           >
-            hello@example.com
+          zhoutingzheng@gmail.com
           </a>
           <p class="text-body text-background/50">
-            Shanghai, China
+            Pittsburgh, PA
           </p>
         </div>
       </div>
 
-      <!-- Social -->
-      <div class="md:col-span-3">
-        <h4 class="text-body-lg style-label text-background/40 mb-6">
-          Follow
-        </h4>
-        <div class="flex flex-col gap-3">
-          <a 
-            href="#" 
-            class="text-body text-background/50 hover:text-background transition-colors"
-          >
-            Instagram
-          </a>
-          <a 
-            href="#" 
-            class="text-body text-background/50 hover:text-background transition-colors"
-          >
-            Behance
-          </a>
-        </div>
-      </div>
     </div>
 
     <!-- Bottom Bar -->
     <div class="mt-24 pt-8 border-t border-background/10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
       <p class="text-label text-background/30">
         &copy; {currentYear} All rights reserved
-      </p>
-      <p class="text-label text-background/30">
-        Crafted with intention
       </p>
     </div>
   </div>
