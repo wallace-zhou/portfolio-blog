@@ -103,7 +103,7 @@ const rows = groupImagesByType(categorizedImages);
     class="gallery-container pb-0 px-2 md:pl-28 md:pr-4"
   >
     {rows.map((row, rowIndex) => (
-      <div class={`gallery-row gallery-row--${row.type}`}>
+      <div class={`gallery-row gallery-row--${row.type}`} data-scroll-row>
         {row.images.map((image, imageIndex) => (
           <div 
             class="gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8"
@@ -143,6 +143,12 @@ const rows = groupImagesByType(categorizedImages);
     gap: 1rem;
     width: 100%;
     margin-bottom: 1rem;
+    /* Slideshow scroll animation properties */
+    will-change: transform, opacity;
+    transform: translateY(var(--scroll-y, 0px)) scale(var(--scroll-scale, 1));
+    opacity: var(--scroll-opacity, 1);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   /* Portrait: 3 across (4:6 aspect ratio) */
@@ -195,8 +201,9 @@ const rows = groupImagesByType(categorizedImages);
 <script>
   // Gallery fade-in animation
   const galleryItems = document.querySelectorAll('.gallery-item');
+  const galleryRows = document.querySelectorAll('[data-scroll-row]');
 
-  // Initial fade-in animation
+  // Initial fade-in animation for items
   function initFadeIn() {
     setTimeout(() => {
       galleryItems.forEach((item) => {
@@ -206,6 +213,114 @@ const rows = groupImagesByType(categorizedImages);
     }, 100);
   }
 
+  // Slideshow scroll animation configuration
+  const ENTRY_ZONE = 0.25;   // Bottom 25% of viewport - entry zone
+  const EXIT_ZONE = 0.2;     // Top 20% of viewport - exit zone  
+  const MAX_TRANSLATE = 120; // Maximum translateY in pixels for dramatic slide
+  const MIN_SCALE = 0.92;    // Minimum scale for subtle zoom effect
+
+  // Easing function for smooth slideshow transitions
+  function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // Calculate slideshow animation values based on row position
+  function calculateScrollAnimation(row: Element): { opacity: number; translateY: number; scale: number } {
+    const rect = row.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    
+    const rowBottom = rect.bottom;
+    const rowTop = rect.top;
+    const rowHeight = rect.height;
+    const rowCenter = rowTop + rowHeight / 2;
+    
+    let opacity = 1;
+    let translateY = 0;
+    let scale = 1;
+    
+    // Exit zone: Row is leaving through the top
+    const exitThreshold = viewportHeight * EXIT_ZONE;
+    if (rowBottom < exitThreshold && rowBottom > -rowHeight) {
+      // Calculate progress: 1 = just entering exit zone, 0 = fully exited
+      const exitProgress = Math.max(0, (rowBottom + rowHeight * 0.5) / (exitThreshold + rowHeight * 0.5));
+      const easedProgress = easeInOutCubic(exitProgress);
+      
+      // Full fade out and slide up
+      opacity = easedProgress;
+      translateY = -MAX_TRANSLATE * (1 - easedProgress);
+      scale = MIN_SCALE + (1 - MIN_SCALE) * easedProgress;
+    }
+    // Row is completely above viewport
+    else if (rowBottom <= -rowHeight) {
+      opacity = 0;
+      translateY = -MAX_TRANSLATE;
+      scale = MIN_SCALE;
+    }
+    // Entry zone: Row is entering from the bottom
+    else if (rowTop > viewportHeight * (1 - ENTRY_ZONE)) {
+      // Calculate how far into the entry zone the row is
+      const entryStart = viewportHeight * (1 - ENTRY_ZONE);
+      const distanceIntoZone = rowTop - entryStart;
+      const entryZoneSize = viewportHeight * ENTRY_ZONE + rowHeight * 0.5;
+      
+      // Progress: 0 = just entering, 1 = fully entered
+      const entryProgress = Math.max(0, Math.min(1, 1 - (distanceIntoZone / entryZoneSize)));
+      const easedProgress = easeInOutCubic(entryProgress);
+      
+      // Full fade in and slide up from below
+      opacity = easedProgress;
+      translateY = MAX_TRANSLATE * (1 - easedProgress);
+      scale = MIN_SCALE + (1 - MIN_SCALE) * easedProgress;
+    }
+    // Row is completely below viewport
+    else if (rowTop >= viewportHeight) {
+      opacity = 0;
+      translateY = MAX_TRANSLATE;
+      scale = MIN_SCALE;
+    }
+    // Visible zone - row is fully in the viewport (slideshow "active" state)
+    else {
+      opacity = 1;
+      translateY = 0;
+      scale = 1;
+    }
+    
+    return { opacity, translateY, scale };
+  }
+
+  // Update all rows based on scroll position
+  let ticking = false;
+  
+  function updateScrollAnimations() {
+    galleryRows.forEach((row) => {
+      const { opacity, translateY, scale } = calculateScrollAnimation(row);
+      const element = row as HTMLElement;
+      element.style.setProperty('--scroll-opacity', opacity.toString());
+      element.style.setProperty('--scroll-y', `${translateY}px`);
+      element.style.setProperty('--scroll-scale', scale.toString());
+    });
+    ticking = false;
+  }
+
+  // Scroll event handler with requestAnimationFrame throttling
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(updateScrollAnimations);
+      ticking = true;
+    }
+  }
+
   // Initialize
   initFadeIn();
+  
+  // Set initial scroll state
+  updateScrollAnimations();
+  
+  // Listen for scroll events
+  window.addEventListener('scroll', onScroll, { passive: true });
+  
+  // Also update on resize
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(updateScrollAnimations);
+  }, { passive: true });
 </script>
