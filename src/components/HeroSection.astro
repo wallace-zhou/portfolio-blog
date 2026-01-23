@@ -1,13 +1,13 @@
 ---
 import { Image } from 'astro:assets';
-import gallery1 from '../assets/blog-placeholder-1.jpg';
+import gallery8 from '../assets/blog-placeholder-1.jpg';
 import gallery2 from '../assets/blog-placeholder-2.jpg';
 import gallery3 from '../assets/blog-placeholder-3.jpg';
 import gallery4 from '../assets/blog-placeholder-4.jpg';
 import gallery5 from '../assets/DSC_9074.jpg';
 import gallery6 from '../assets/blog-placeholder-about.jpg';
 import gallery7 from '../assets/blog-placeholder-6.jpg';
-import gallery8 from '../assets/DSC_4517.jpg';
+import gallery1 from '../assets/DSC_4517.jpg';
 
 const galleryImages = [
   { src: gallery1, alt: "Portrait in dramatic lighting" },
@@ -52,13 +52,27 @@ const imagesPerRow: Record<AspectType, number> = {
 function groupImagesByType(images: ImageWithType[]): Row[] {
   const rows: Row[] = [];
   
-  // Sort images by type to group them together
-  const sorted = [...images].sort((a, b) => {
+  // Find the wide image with the lowest index
+  const wideImages = images.filter(img => img.type === 'wide');
+  const lowestWideImage = wideImages.length > 0 
+    ? wideImages.reduce((min, img) => img.index < min.index ? img : min)
+    : null;
+  
+  // If there's a wide image, put it in the first row
+  if (lowestWideImage) {
+    rows.push({ type: 'wide', images: [lowestWideImage] });
+  }
+  
+  // Get remaining images (excluding the lowest wide image)
+  const remainingImages = images.filter(img => img !== lowestWideImage);
+  
+  // Sort remaining images by type to group them together
+  const sorted = [...remainingImages].sort((a, b) => {
     const order: Record<AspectType, number> = { portrait: 0, landscape: 1, wide: 2 };
     return order[a.type] - order[b.type];
   });
   
-  // Group images into rows based on their type's column count
+  // Group remaining images into rows based on their type's column count
   let currentRow: Row | null = null;
   
   for (const image of sorted) {
@@ -100,8 +114,8 @@ const rows = groupImagesByType(categorizedImages);
               src={image.src}
               alt={image.alt}
               class="w-full h-auto transition-transform duration-700 group-hover:scale-105"
-              quality="mid"
-              widths={[400, 800, 1200]}
+              quality="high"
+              widths={[400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000, 6400, 6800, 7200, 7600, 8000, 8400, 8800, 9200, 9600, 10000]}
               sizes={row.type === 'portrait' ? '33vw' : row.type === 'landscape' ? '50vw' : '100vw'}
               loading={rowIndex === 0 && imageIndex < 3 ? "eager" : "lazy"}
             />
@@ -120,6 +134,8 @@ const rows = groupImagesByType(categorizedImages);
     flex-direction: column;
     align-items: center;
     width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
   }
 
   .gallery-row {
