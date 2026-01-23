@@ -1,0 +1,249 @@
+---
+const navLinks = [
+  { label: "Work", href: "#work" },
+  { label: "Journal", href: "/blog" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "#contact" },
+];
+---
+
+<style>
+  #nav-logo img {
+    filter: brightness(0) invert(1);
+  }
+</style>
+
+<!-- Desktop Sidebar -->
+<nav 
+  id="desktop-nav"
+  class="fixed left-0 top-0 h-screen w-28 z-50 hidden md:flex flex-col items-center py-8 bg-primary"
+>
+  <!-- Logo - only visible after scrolling past hero -->
+  <a 
+    href="#"
+    id="nav-logo"
+    class="absolute top-8 left-1/2 -translate-x-1/2 transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none"
+  >
+    <img
+      src="/logo-z.svg"
+      alt="Wallace Z signature logo"
+      class="h-12 md:h-16 w-auto"
+    />
+  </a>
+
+  <!-- Horizontal Nav Links - positioned in upper half -->
+  <div class="mt-[calc(var(--header-height,160px)-32px)] px-4 flex flex-col items-center gap-10">
+    {navLinks.map((link) => (
+      <a
+        href={link.href}
+        class="nav-link text-small style-nav transition-colors duration-300 hover:opacity-100 text-background/70 hover:text-background"
+      >
+        {link.label}
+      </a>
+    ))}
+  </div>
+</nav>
+
+<!-- Mobile Header -->
+<header id="mobile-header" class="fixed top-0 left-0 right-0 z-50 md:hidden">
+  <div id="mobile-header-bg" class="relative z-10 flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
+    <!-- Menu Toggle - on the left -->
+    <button 
+      id="menu-toggle"
+      class="text-background p-2"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+    >
+      <div class="w-6 flex flex-col gap-1.5">
+        <span id="menu-line-1" class="block h-px bg-current transition-transform duration-300"></span>
+        <span id="menu-line-2" class="block h-px bg-current transition-opacity duration-300"></span>
+        <span id="menu-line-3" class="block h-px bg-current transition-transform duration-300"></span>
+      </div>
+    </button>
+
+    <!-- Logo - only visible after scrolling past hero -->
+    <a 
+      href="#"
+      id="mobile-logo"
+      class="transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none"
+    >
+      <img
+        src="/logo-z.svg"
+        alt="Wallace Z signature logo"
+        class="h-12 w-auto"
+      />
+    </a>
+  </div>
+
+  <!-- Mobile Menu Backdrop -->
+  <div 
+    id="mobile-menu-backdrop" 
+    class="fixed inset-0 z-0 bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
+  ></div>
+
+  <!-- Mobile Menu Sidebar -->
+  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[5] bg-primary transition-transform duration-500 -translate-x-full">
+    <div class="flex flex-col items-center justify-center h-full gap-12">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="mobile-nav-link text-heading style-cta style-heading-bold text-background/80 hover:text-background transition-colors"
+        >
+          {link.label}
+        </a>
+      ))}
+    </div>
+  </div>
+</header>
+
+<script>
+  // Scroll detection for nav background and logo visibility
+  const desktopNav = document.getElementById('desktop-nav');
+  const navLogo = document.getElementById('nav-logo');
+  const mobileHeaderBg = document.getElementById('mobile-header-bg');
+  const mobileLogo = document.getElementById('mobile-logo');
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+  const menuLine1 = document.getElementById('menu-line-1');
+  const menuLine2 = document.getElementById('menu-line-2');
+  const menuLine3 = document.getElementById('menu-line-3');
+  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+  const heroTopLogo = document.getElementById('hero-top-logo');
+
+  let isMobileMenuOpen = false;
+  let isHeroLogoVisible = true;
+
+  // Use Intersection Observer to detect when hero logo is out of view (only on home page)
+  if (heroTopLogo) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isHeroLogoVisible = entry.isIntersecting;
+          updateNavLogoVisibility();
+        });
+      },
+      {
+        threshold: 0,
+        rootMargin: '0px'
+      }
+    );
+    observer.observe(heroTopLogo);
+  } else {
+    // On pages without hero logo, always show nav logo
+    isHeroLogoVisible = false;
+    updateNavLogoVisibility();
+  }
+
+  function updateNavLogoVisibility() {
+    const showNavLogo = !isHeroLogoVisible;
+
+    // Desktop logo visibility - only show when hero logo is not visible
+    if (navLogo) {
+      if (showNavLogo) {
+        navLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        navLogo.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        navLogo.classList.remove('opacity-100', 'translate-y-0');
+        navLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      }
+    }
+
+    // Mobile logo visibility - only show when hero logo is not visible
+    if (mobileLogo) {
+      if (showNavLogo) {
+        mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+        mobileLogo.classList.add('opacity-100', 'translate-y-0');
+      } else {
+        mobileLogo.classList.remove('opacity-100', 'translate-y-0');
+        mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+      }
+    }
+  }
+
+  function handleScroll() {
+    const scrollY = window.scrollY;
+    const isScrolled = scrollY > 100;
+    const hasScrolled = scrollY > 0;
+
+    // Mobile header background
+    if (mobileHeaderBg) {
+      if (isScrolled) {
+        mobileHeaderBg.classList.remove('bg-transparent');
+        mobileHeaderBg.classList.add('bg-primary');
+      } else {
+        mobileHeaderBg.classList.remove('bg-primary');
+        mobileHeaderBg.classList.add('bg-transparent');
+      }
+    }
+  }
+
+  function toggleMobileMenu() {
+    isMobileMenuOpen = !isMobileMenuOpen;
+    
+    if (menuToggle) {
+      menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
+    }
+
+    // Toggle sidebar (slides from left)
+    if (mobileMenu) {
+      if (isMobileMenuOpen) {
+        mobileMenu.classList.remove('-translate-x-full');
+        mobileMenu.classList.add('translate-x-0');
+      } else {
+        mobileMenu.classList.remove('translate-x-0');
+        mobileMenu.classList.add('-translate-x-full');
+      }
+    }
+
+    // Toggle backdrop overlay
+    if (mobileMenuBackdrop) {
+      if (isMobileMenuOpen) {
+        mobileMenuBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+        mobileMenuBackdrop.classList.add('opacity-100', 'pointer-events-auto');
+      } else {
+        mobileMenuBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
+        mobileMenuBackdrop.classList.add('opacity-0', 'pointer-events-none');
+      }
+    }
+
+    // Animate menu icon
+    if (menuLine1 && menuLine2 && menuLine3) {
+      if (isMobileMenuOpen) {
+        menuLine1.classList.add('rotate-45', 'translate-y-2');
+        menuLine2.classList.add('opacity-0');
+        menuLine3.classList.add('-rotate-45', '-translate-y-2');
+      } else {
+        menuLine1.classList.remove('rotate-45', 'translate-y-2');
+        menuLine2.classList.remove('opacity-0');
+        menuLine3.classList.remove('-rotate-45', '-translate-y-2');
+      }
+    }
+  }
+
+  function closeMobileMenu() {
+    if (isMobileMenuOpen) {
+      toggleMobileMenu();
+    }
+  }
+
+  // Event listeners
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  
+  if (menuToggle) {
+    menuToggle.addEventListener('click', toggleMobileMenu);
+  }
+
+  // Close menu when clicking backdrop
+  if (mobileMenuBackdrop) {
+    mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
+  }
+
+  mobileNavLinks.forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
+
+  // Initial state
+  handleScroll();
+  updateNavLogoVisibility();
+</script>

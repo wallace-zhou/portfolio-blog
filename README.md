@@ -1,62 +1,122 @@
-# Astro Starter Kit: Blog
+# Portfolio Blog
 
-```sh
-npm create astro@latest -- --template blog
+A personal portfolio and blog website for Wallace Zhou, showcasing photography work and written content. Built with Astro for optimal performance and SEO.
+
+## Tech Stack
+
+- **Framework:** [Astro](https://astro.build/) v5
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) v4
+- **Content:** Markdown & MDX with type-safe frontmatter
+- **Integrations:** Sitemap, RSS Feed
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or your preferred package manager
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/portfolio-blog.git
+cd portfolio-blog
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The site will be available at `http://localhost:4321`
 
-Features:
+## Project Structure
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
+```
 ├── public/
+│   ├── fonts/              # Custom web fonts
+│   └── *.svg               # Logo and favicon assets
 ├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+│   ├── assets/             # Optimized images (processed by Astro)
+│   ├── components/         # Reusable Astro components
+│   │   ├── BaseHead.astro
+│   │   ├── Header.astro
+│   │   ├── Footer.astro
+│   │   ├── HeroSection.astro
+│   │   ├── IntroductionSection.astro
+│   │   ├── JournalSection.astro
+│   │   └── SidebarNav.astro
+│   ├── content/
+│   │   └── blog/           # Blog posts (Markdown/MDX)
+│   ├── layouts/            # Page layouts
+│   ├── pages/              # File-based routing
+│   │   ├── index.astro     # Homepage
+│   │   ├── about.astro     # About page
+│   │   ├── blog/           # Blog listing and posts
+│   │   └── rss.xml.js      # RSS feed endpoint
+│   └── styles/
+│       └── global.css      # Global styles and Tailwind imports
+├── astro.config.mjs        # Astro configuration
+├── content.config.ts       # Content collection schemas
+└── tsconfig.json           # TypeScript configuration
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Available Scripts
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+| Command           | Description                                      |
+| :---------------- | :----------------------------------------------- |
+| `npm run dev`     | Start development server at `localhost:4321`     |
+| `npm run build`   | Build production site to `./dist/`               |
+| `npm run preview` | Preview production build locally                 |
+| `npm run astro`   | Run Astro CLI commands                           |
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+## Content Management
 
-Any static assets, like images, can be placed in the `public/` directory.
+Blog posts are stored in `src/content/blog/` as Markdown or MDX files. Each post requires the following frontmatter:
 
-## 🧞 Commands
+```yaml
+---
+title: "Post Title"
+description: "Brief description for SEO and previews"
+pubDate: 2026-01-23
+updatedDate: 2026-01-23  # optional
+heroImage: "./path-to-image.jpg"  # optional
+---
+```
 
-All commands are run from the root of the project, from a terminal:
+## Configuration
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Update `src/consts.ts` to modify site-wide settings:
 
-## 👀 Want to learn more?
+```typescript
+export const SITE_TITLE = 'Your Name';
+export const SITE_DESCRIPTION = 'Your site description';
+```
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+Update the `site` property in `astro.config.mjs` before deploying:
 
-## Credit
+```javascript
+export default defineConfig({
+  site: 'https://yourdomain.com',
+  // ...
+});
+```
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+## Deployment
+
+This site can be deployed to any static hosting provider:
+
+```bash
+# Build for production
+npm run build
+
+# Output will be in ./dist/
+```
+
+Compatible with Vercel, Netlify, Cloudflare Pages, GitHub Pages, and other static hosts.
+
+## License
+
+MIT
