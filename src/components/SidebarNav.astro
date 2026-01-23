@@ -42,19 +42,6 @@ const navLinks = [
       </a>
     ))}
   </div>
-
-  <!-- Scroll Indicator - at bottom, disappears on scroll -->
-  <div 
-    id="scroll-indicator"
-    class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 transition-all duration-500 opacity-100"
-  >
-    <div class="w-px h-12 bg-background/30 relative overflow-hidden">
-      <div class="absolute w-full h-4 bg-background/80 animate-scroll-line"></div>
-    </div>
-    <span class="text-label style-label text-background/40">
-      Scroll
-    </span>
-  </div>
 </nav>
 
 <!-- Mobile Header -->
@@ -109,7 +96,6 @@ const navLinks = [
   // Scroll detection for nav background and logo visibility
   const desktopNav = document.getElementById('desktop-nav');
   const navLogo = document.getElementById('nav-logo');
-  const scrollIndicator = document.getElementById('scroll-indicator');
   const mobileHeaderBg = document.getElementById('mobile-header-bg');
   const mobileLogo = document.getElementById('mobile-logo');
   const menuToggle = document.getElementById('menu-toggle');
@@ -184,20 +170,6 @@ const navLinks = [
       } else {
         mobileHeaderBg.classList.remove('bg-primary');
         mobileHeaderBg.classList.add('bg-transparent');
-      }
-    }
-
-    // Scroll indicator - hide immediately on any scroll (only on home page)
-    if (scrollIndicator) {
-      if (!heroTopLogo) {
-        // Hide scroll indicator on non-home pages
-        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
-      } else if (hasScrolled) {
-        scrollIndicator.classList.remove('opacity-100');
-        scrollIndicator.classList.add('opacity-0', 'pointer-events-none');
-      } else {
-        scrollIndicator.classList.remove('opacity-0', 'pointer-events-none');
-        scrollIndicator.classList.add('opacity-100');
       }
     }
   }

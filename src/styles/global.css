@@ -124,20 +124,6 @@
   }
 }
 
-/* Scroll indicator animation */
-@keyframes scroll-line {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(400%);
-  }
-}
-
-.animate-scroll-line {
-  animation: scroll-line 2s ease-in-out infinite;
-}
-
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;

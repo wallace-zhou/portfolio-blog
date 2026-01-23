@@ -4,8 +4,10 @@ import gallery1 from '../assets/blog-placeholder-1.jpg';
 import gallery2 from '../assets/blog-placeholder-2.jpg';
 import gallery3 from '../assets/blog-placeholder-3.jpg';
 import gallery4 from '../assets/blog-placeholder-4.jpg';
-import gallery5 from '../assets/blog-placeholder-5.jpg';
+import gallery5 from '../assets/DSC_9074.jpg';
 import gallery6 from '../assets/blog-placeholder-about.jpg';
+import gallery7 from '../assets/blog-placeholder-6.jpg';
+import gallery8 from '../assets/DSC_4517.jpg';
 
 const galleryImages = [
   { src: gallery1, alt: "Portrait in dramatic lighting" },
@@ -14,7 +16,66 @@ const galleryImages = [
   { src: gallery4, alt: "Still life with ceramics" },
   { src: gallery5, alt: "Urban street scene" },
   { src: gallery6, alt: "Serene ocean seascape" },
+  { src: gallery7, alt: "Serene ocean seascape" },
+  { src: gallery8, alt: "Serene ocean seascape" },
 ];
+
+// Aspect ratio detection
+type AspectType = 'portrait' | 'landscape' | 'wide';
+
+function getAspectType(width: number, height: number): AspectType {
+  const ratio = width / height;
+  if (ratio < 1) return 'portrait';       // 4:6 = 0.667
+  if (ratio < 1.75) return 'landscape';   // 6:4 = 1.5
+  return 'wide';                          // 2:1 = 2.0
+}
+
+// Categorize images by aspect ratio
+const categorizedImages = galleryImages.map((img, index) => ({
+  ...img,
+  index,
+  ratio: img.src.width / img.src.height,
+  type: getAspectType(img.src.width, img.src.height)
+}));
+
+// Group images by aspect type into rows with proper column counts
+type ImageWithType = typeof categorizedImages[number];
+type Row = { type: AspectType; images: ImageWithType[] };
+
+// How many images per row for each type
+const imagesPerRow: Record<AspectType, number> = {
+  portrait: 3,   // 3 across for 4:6
+  landscape: 2,  // 2 across for 6:4
+  wide: 1        // 1 across for 2:1
+};
+
+function groupImagesByType(images: ImageWithType[]): Row[] {
+  const rows: Row[] = [];
+  
+  // Sort images by type to group them together
+  const sorted = [...images].sort((a, b) => {
+    const order: Record<AspectType, number> = { portrait: 0, landscape: 1, wide: 2 };
+    return order[a.type] - order[b.type];
+  });
+  
+  // Group images into rows based on their type's column count
+  let currentRow: Row | null = null;
+  
+  for (const image of sorted) {
+    const maxPerRow = imagesPerRow[image.type];
+    
+    // Start new row if type changed or current row is full
+    if (!currentRow || currentRow.type !== image.type || currentRow.images.length >= maxPerRow) {
+      currentRow = { type: image.type, images: [] };
+      rows.push(currentRow);
+    }
+    currentRow.images.push(image);
+  }
+  
+  return rows;
+}
+
+const rows = groupImagesByType(categorizedImages);
 ---
 
 <section 
@@ -25,31 +86,95 @@ const galleryImages = [
   <!-- Photo Grid Gallery -->
   <div 
     id="hero-gallery"
-    class="pb-0 px-2 md:pl-28 md:pr-4"
+    class="gallery-container pb-0 px-2 md:pl-28 md:pr-4"
   >
-    <div class="columns-1 md:columns-3 gap-4 md:gap-6 w-full mb-0">
-      {galleryImages.map((image, index) => (
-        <div 
-          class="gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8 mb-4 md:mb-6 break-inside-avoid"
-          style={`transition-delay: ${index * 100}ms;`}
-          data-index={index}
-        >
-          <Image
-            src={image.src}
-            alt={image.alt}
-            class="w-full h-auto transition-transform duration-700 group-hover:scale-105"
-            quality="mid"
-            widths={[400, 800, 1200]}
-            sizes="(max-width: 768px) 50vw, 33vw"
-            loading={index < 3 ? "eager" : "lazy"}
-          />
-          <!-- Hover overlay -->
-          <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-500"></div>
-        </div>
-      ))}
-    </div>
+    {rows.map((row, rowIndex) => (
+      <div class={`gallery-row gallery-row--${row.type}`}>
+        {row.images.map((image, imageIndex) => (
+          <div 
+            class="gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8"
+            style={`transition-delay: ${(rowIndex * 3 + imageIndex) * 100}ms;`}
+            data-index={image.index}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              class="w-full h-auto transition-transform duration-700 group-hover:scale-105"
+              quality="mid"
+              widths={[400, 800, 1200]}
+              sizes={row.type === 'portrait' ? '33vw' : row.type === 'landscape' ? '50vw' : '100vw'}
+              loading={rowIndex === 0 && imageIndex < 3 ? "eager" : "lazy"}
+            />
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-500"></div>
+          </div>
+        ))}
+      </div>
+    ))}
   </div>
 </section>
+
+<style>
+  .gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+
+  .gallery-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Portrait: 3 across (4:6 aspect ratio) */
+  .gallery-row--portrait {
+    max-width: 100%;
+  }
+  .gallery-row--portrait .gallery-item {
+    flex: 1 1 calc(33.333% - 0.667rem);
+    max-width: calc(33.333% - 0.667rem);
+  }
+
+  /* Landscape: 2 across (6:4 aspect ratio) */
+  .gallery-row--landscape {
+    max-width: 100%;
+  }
+  .gallery-row--landscape .gallery-item {
+    flex: 1 1 calc(50% - 0.5rem);
+    max-width: calc(50% - 0.5rem);
+  }
+
+  /* Wide landscape: 1 across (2:1 aspect ratio) */
+  .gallery-row--wide {
+    max-width: 100%;
+  }
+  .gallery-row--wide .gallery-item {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Mobile: stack all images in single column */
+  @media (max-width: 768px) {
+    .gallery-row {
+      flex-direction: column;
+    }
+    .gallery-row--portrait .gallery-item,
+    .gallery-row--landscape .gallery-item,
+    .gallery-row--wide .gallery-item {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+</style>
 
 <script>
   // Gallery fade-in animation
