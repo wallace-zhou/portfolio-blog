@@ -1,0 +1,326 @@
+---
+import { Image } from 'astro:assets';
+import gallery8 from '../assets/blog-placeholder-1.jpg';
+import gallery2 from '../assets/blog-placeholder-2.jpg';
+import gallery3 from '../assets/blog-placeholder-3.jpg';
+import gallery4 from '../assets/blog-placeholder-4.jpg';
+import gallery5 from '../assets/DSC_9074.jpg';
+import gallery6 from '../assets/blog-placeholder-about.jpg';
+import gallery7 from '../assets/blog-placeholder-6.jpg';
+import gallery1 from '../assets/DSC_4517.jpg';
+
+const galleryImages = [
+  { src: gallery1, alt: "Portrait in dramatic lighting" },
+  { src: gallery2, alt: "Minimalist architecture" },
+  { src: gallery3, alt: "Misty forest at dawn" },
+  { src: gallery4, alt: "Still life with ceramics" },
+  { src: gallery5, alt: "Urban street scene" },
+  { src: gallery6, alt: "Serene ocean seascape" },
+  { src: gallery7, alt: "Serene ocean seascape" },
+  { src: gallery8, alt: "Serene ocean seascape" },
+];
+
+// Aspect ratio detection
+type AspectType = 'portrait' | 'landscape' | 'wide';
+
+function getAspectType(width: number, height: number): AspectType {
+  const ratio = width / height;
+  if (ratio < 1) return 'portrait';       // 4:6 = 0.667
+  if (ratio < 1.75) return 'landscape';   // 6:4 = 1.5
+  return 'wide';                          // 2:1 = 2.0
+}
+
+// Categorize images by aspect ratio
+const categorizedImages = galleryImages.map((img, index) => ({
+  ...img,
+  index,
+  ratio: img.src.width / img.src.height,
+  type: getAspectType(img.src.width, img.src.height)
+}));
+
+// Group images by aspect type into rows with proper column counts
+type ImageWithType = typeof categorizedImages[number];
+type Row = { type: AspectType; images: ImageWithType[] };
+
+// How many images per row for each type
+const imagesPerRow: Record<AspectType, number> = {
+  portrait: 3,   // 3 across for 4:6
+  landscape: 2,  // 2 across for 6:4
+  wide: 1        // 1 across for 2:1
+};
+
+function groupImagesByType(images: ImageWithType[]): Row[] {
+  const rows: Row[] = [];
+  
+  // Find the wide image with the lowest index
+  const wideImages = images.filter(img => img.type === 'wide');
+  const lowestWideImage = wideImages.length > 0 
+    ? wideImages.reduce((min, img) => img.index < min.index ? img : min)
+    : null;
+  
+  // If there's a wide image, put it in the first row
+  if (lowestWideImage) {
+    rows.push({ type: 'wide', images: [lowestWideImage] });
+  }
+  
+  // Get remaining images (excluding the lowest wide image)
+  const remainingImages = images.filter(img => img !== lowestWideImage);
+  
+  // Sort remaining images by type to group them together
+  const sorted = [...remainingImages].sort((a, b) => {
+    const order: Record<AspectType, number> = { portrait: 0, landscape: 1, wide: 2 };
+    return order[a.type] - order[b.type];
+  });
+  
+  // Group remaining images into rows based on their type's column count
+  let currentRow: Row | null = null;
+  
+  for (const image of sorted) {
+    const maxPerRow = imagesPerRow[image.type];
+    
+    // Start new row if type changed or current row is full
+    if (!currentRow || currentRow.type !== image.type || currentRow.images.length >= maxPerRow) {
+      currentRow = { type: image.type, images: [] };
+      rows.push(currentRow);
+    }
+    currentRow.images.push(image);
+  }
+  
+  return rows;
+}
+
+const rows = groupImagesByType(categorizedImages);
+---
+
+<section 
+  id="work"
+  class="relative w-full overflow-hidden bg-primary"
+  style="height: fit-content;"
+>
+  <!-- Photo Grid Gallery -->
+  <div 
+    id="hero-gallery"
+    class="gallery-container pb-0 px-2 md:pl-28 md:pr-4"
+  >
+    {rows.map((row, rowIndex) => (
+      <div class={`gallery-row gallery-row--${row.type}`} data-scroll-row>
+        {row.images.map((image, imageIndex) => (
+          <div 
+            class="gallery-item relative overflow-hidden group cursor-pointer transition-all duration-700 opacity-0 translate-y-8"
+            style={`transition-delay: ${(rowIndex * 3 + imageIndex) * 100}ms;`}
+            data-index={image.index}
+          >
+            <Image
+              src={image.src}
+              alt={image.alt}
+              class="w-full h-auto transition-transform duration-700 group-hover:scale-105"
+              quality="high"
+              widths={[400, 800, 1200, 1600, 2000, 2400, 2800, 3200, 3600, 4000, 4400, 4800, 5200, 5600, 6000, 6400, 6800, 7200, 7600, 8000, 8400, 8800, 9200, 9600, 10000]}
+              sizes={row.type === 'portrait' ? '33vw' : row.type === 'landscape' ? '50vw' : '100vw'}
+              loading={rowIndex === 0 && imageIndex < 3 ? "eager" : "lazy"}
+            />
+            <!-- Hover overlay -->
+            <div class="absolute inset-0 bg-primary/0 group-hover:bg-primary/15 transition-colors duration-500"></div>
+          </div>
+        ))}
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .gallery-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+
+  .gallery-row {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
+    /* Slideshow scroll animation properties */
+    will-change: transform, opacity;
+    transform: translateY(var(--scroll-y, 0px)) scale(var(--scroll-scale, 1));
+    opacity: var(--scroll-opacity, 1);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                opacity 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Portrait: 3 across (4:6 aspect ratio) */
+  .gallery-row--portrait {
+    max-width: 100%;
+  }
+  .gallery-row--portrait .gallery-item {
+    flex: 1 1 calc(33.333% - 0.667rem);
+    max-width: calc(33.333% - 0.667rem);
+  }
+
+  /* Landscape: 2 across (6:4 aspect ratio) */
+  .gallery-row--landscape {
+    max-width: 100%;
+  }
+  .gallery-row--landscape .gallery-item {
+    flex: 1 1 calc(50% - 0.5rem);
+    max-width: calc(50% - 0.5rem);
+  }
+
+  /* Wide landscape: 1 across (2:1 aspect ratio) */
+  .gallery-row--wide {
+    max-width: 100%;
+  }
+  .gallery-row--wide .gallery-item {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Mobile: stack all images in single column */
+  @media (max-width: 768px) {
+    .gallery-row {
+      flex-direction: column;
+    }
+    .gallery-row--portrait .gallery-item,
+    .gallery-row--landscape .gallery-item,
+    .gallery-row--wide .gallery-item {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+</style>
+
+<script>
+  // Gallery fade-in animation
+  const galleryItems = document.querySelectorAll('.gallery-item');
+  const galleryRows = document.querySelectorAll('[data-scroll-row]');
+
+  // Initial fade-in animation for items
+  function initFadeIn() {
+    setTimeout(() => {
+      galleryItems.forEach((item) => {
+        item.classList.remove('opacity-0', 'translate-y-8');
+        item.classList.add('opacity-100', 'translate-y-0');
+      });
+    }, 100);
+  }
+
+  // Slideshow scroll animation configuration
+  const ENTRY_ZONE = 0.25;   // Bottom 25% of viewport - entry zone
+  const EXIT_ZONE = 0.2;     // Top 20% of viewport - exit zone  
+  const MAX_TRANSLATE = 120; // Maximum translateY in pixels for dramatic slide
+  const MIN_SCALE = 0.92;    // Minimum scale for subtle zoom effect
+
+  // Easing function for smooth slideshow transitions
+  function easeInOutCubic(t: number): number {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  // Calculate slideshow animation values based on row position
+  function calculateScrollAnimation(row: Element): { opacity: number; translateY: number; scale: number } {
+    const rect = row.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+    
+    const rowBottom = rect.bottom;
+    const rowTop = rect.top;
+    const rowHeight = rect.height;
+    const rowCenter = rowTop + rowHeight / 2;
+    
+    let opacity = 1;
+    let translateY = 0;
+    let scale = 1;
+    
+    // Exit zone: Row is leaving through the top
+    const exitThreshold = viewportHeight * EXIT_ZONE;
+    if (rowBottom < exitThreshold && rowBottom > -rowHeight) {
+      // Calculate progress: 1 = just entering exit zone, 0 = fully exited
+      const exitProgress = Math.max(0, (rowBottom + rowHeight * 0.5) / (exitThreshold + rowHeight * 0.5));
+      const easedProgress = easeInOutCubic(exitProgress);
+      
+      // Full fade out and slide up
+      opacity = easedProgress;
+      translateY = -MAX_TRANSLATE * (1 - easedProgress);
+      scale = MIN_SCALE + (1 - MIN_SCALE) * easedProgress;
+    }
+    // Row is completely above viewport
+    else if (rowBottom <= -rowHeight) {
+      opacity = 0;
+      translateY = -MAX_TRANSLATE;
+      scale = MIN_SCALE;
+    }
+    // Entry zone: Row is entering from the bottom
+    else if (rowTop > viewportHeight * (1 - ENTRY_ZONE)) {
+      // Calculate how far into the entry zone the row is
+      const entryStart = viewportHeight * (1 - ENTRY_ZONE);
+      const distanceIntoZone = rowTop - entryStart;
+      const entryZoneSize = viewportHeight * ENTRY_ZONE + rowHeight * 0.5;
+      
+      // Progress: 0 = just entering, 1 = fully entered
+      const entryProgress = Math.max(0, Math.min(1, 1 - (distanceIntoZone / entryZoneSize)));
+      const easedProgress = easeInOutCubic(entryProgress);
+      
+      // Full fade in and slide up from below
+      opacity = easedProgress;
+      translateY = MAX_TRANSLATE * (1 - easedProgress);
+      scale = MIN_SCALE + (1 - MIN_SCALE) * easedProgress;
+    }
+    // Row is completely below viewport
+    else if (rowTop >= viewportHeight) {
+      opacity = 0;
+      translateY = MAX_TRANSLATE;
+      scale = MIN_SCALE;
+    }
+    // Visible zone - row is fully in the viewport (slideshow "active" state)
+    else {
+      opacity = 1;
+      translateY = 0;
+      scale = 1;
+    }
+    
+    return { opacity, translateY, scale };
+  }
+
+  // Update all rows based on scroll position
+  let ticking = false;
+  
+  function updateScrollAnimations() {
+    galleryRows.forEach((row) => {
+      const { opacity, translateY, scale } = calculateScrollAnimation(row);
+      const element = row as HTMLElement;
+      element.style.setProperty('--scroll-opacity', opacity.toString());
+      element.style.setProperty('--scroll-y', `${translateY}px`);
+      element.style.setProperty('--scroll-scale', scale.toString());
+    });
+    ticking = false;
+  }
+
+  // Scroll event handler with requestAnimationFrame throttling
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(updateScrollAnimations);
+      ticking = true;
+    }
+  }
+
+  // Initialize
+  initFadeIn();
+  
+  // Set initial scroll state
+  updateScrollAnimations();
+  
+  // Listen for scroll events
+  window.addEventListener('scroll', onScroll, { passive: true });
+  
+  // Also update on resize
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(updateScrollAnimations);
+  }, { passive: true });
+</script>

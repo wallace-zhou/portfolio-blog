@@ -1,0 +1,43 @@
+---
+---
+
+<section 
+    id="about"
+    class="bg-primary py-24 md:py-32 md:pl-28 flex items-center min-h-screen"
+>
+    <div class="w-[70vw] max-w-7xl mx-auto px-8 md:px-16">
+        <p 
+            class="intro-text w-full m-0 text-body-lg leading-relaxed text-background text-center transition-all duration-1000 opacity-0 translate-y-8"
+            data-animate="fade-in"
+        >
+            I am not a good writer, I am not a good designer, I am not a good web developer, and I am a mediocre photographer. I am nowhere near qualified enough to build and maintain this photoblog website but that kind of is the point.
+
+            <br />
+            <br />
+
+            Learning is my main purpose for this project. I want to use this experience to learn about the art of photography and UI/UX design and document every step in my way using this medium. I no longer use social media so this will be the only way for me to showcase my travel and my work. While my main purpose for this site is to track my photography journey, my blogs will not be limited to just photography but everything that I find interesting in my life. 
+        </p>
+    </div>
+</section>
+
+<script>
+    // IntersectionObserver for fade-in animation
+    const introText = document.querySelector('.intro-text');
+    
+    if (introText) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('opacity-0', 'translate-y-8');
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    observer.unobserve(entry.target);
+                }
+                });
+            },
+            { threshold: 0.2 }
+        );
+        
+        observer.observe(introText);
+    }
+</script>
