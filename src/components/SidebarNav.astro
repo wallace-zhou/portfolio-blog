@@ -1,8 +1,8 @@
 ---
 const navLinks = [
   { label: "Work", href: "#work" },
-  { label: "Journal", href: "#journal" },
-  { label: "About", href: "#about" },
+  { label: "Journal", href: "/blog" },
+  { label: "About", href: "/about" },
   { label: "Contact", href: "#contact" },
 ];
 ---
@@ -32,7 +32,7 @@ const navLinks = [
   </a>
 
   <!-- Horizontal Nav Links - positioned in upper half -->
-  <div class="mt-32 md:mt-32 px-4 flex flex-col items-center gap-10">
+  <div class="mt-[calc(var(--header-height,160px)-32px)] px-4 flex flex-col items-center gap-10">
     {navLinks.map((link) => (
       <a
         href={link.href}
@@ -65,9 +65,13 @@ const navLinks = [
     <a 
       href="#"
       id="mobile-logo"
-      class="text-heading style-heading text-background transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none font-chinese"
+      class="transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none"
     >
-      光
+      <img
+        src="/logo-z.svg"
+        alt="Wallace Z signature logo"
+        class="h-12 w-auto"
+      />
     </a>
   </div>
 
