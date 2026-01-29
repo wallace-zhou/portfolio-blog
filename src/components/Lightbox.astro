@@ -1,0 +1,259 @@
+---
+import type { PhotoMetadata, PhotoId } from '../data/photos';
+import { imageSources } from '../data/photos';
+
+interface Props {
+  photos: PhotoMetadata[];
+}
+
+const { photos } = Astro.props;
+
+// Pre-compute optimized image URLs for the lightbox
+const photoData = photos.map((photo, index) => ({
+  id: photo.id,
+  title: photo.title,
+  location: photo.location,
+  exif: photo.exif,
+  index,
+}));
+---
+
+<!-- Lightbox Modal -->
+<div 
+  id="lightbox" 
+  class="fixed inset-0 z-[100] hidden bg-black/95 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Image lightbox"
+>
+  <!-- Close button -->
+  <button 
+    id="lightbox-close"
+    class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+    aria-label="Close lightbox"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  </button>
+
+  <!-- Image counter -->
+  <div id="lightbox-counter" class="absolute top-4 left-4 text-white/80 text-sm font-medium z-10">
+    <span id="lightbox-current">1</span> / <span id="lightbox-total">{photos.length}</span>
+  </div>
+
+  <!-- Grid toggle button (top right, next to close) -->
+  <button 
+    id="lightbox-grid-toggle"
+    class="absolute top-4 right-16 z-10 w-10 h-10 flex items-center justify-center text-white/80 hover:text-white transition-colors"
+    aria-label="Return to gallery"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+    </svg>
+  </button>
+
+  <!-- Navigation arrows -->
+  <button 
+    id="lightbox-prev"
+    class="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+    aria-label="Previous image"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <button 
+    id="lightbox-next"
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+    aria-label="Next image"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
+
+  <!-- Main image container -->
+  <div class="absolute inset-0 flex items-center justify-center p-16 md:p-20">
+    <img 
+      id="lightbox-image"
+      src=""
+      alt=""
+      class="max-w-full max-h-full object-contain transition-opacity duration-300"
+    />
+  </div>
+
+  <!-- Image info bar at bottom -->
+  <div id="lightbox-info" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 pt-16">
+    <div class="max-w-4xl mx-auto">
+      <h2 id="lightbox-title" class="text-white text-lg font-medium mb-1"></h2>
+      <p id="lightbox-location" class="text-white/70 text-sm mb-3"></p>
+      <div id="lightbox-exif" class="flex flex-wrap gap-4 text-white/50 text-xs"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Store photo data for JavaScript -->
+<script define:vars={{ photoData }}>
+  window.__lightboxPhotos = photoData;
+</script>
+
+<script>
+  interface PhotoData {
+    id: string;
+    title: string;
+    location: string;
+    exif: {
+      camera?: string;
+      lens?: string;
+      focalLength?: string;
+      aperture?: string;
+      shutterSpeed?: string;
+      iso?: string;
+      dateTaken?: string;
+    };
+    index: number;
+  }
+
+  // Get photo data from the server-rendered script
+  const allPhotos: PhotoData[] = (window as any).__lightboxPhotos || [];
+  
+  // Current state
+  let currentIndex = 0;
+  let filteredPhotos: PhotoData[] = [...allPhotos];
+  let isOpen = false;
+
+  // DOM elements
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
+  const lightboxTitle = document.getElementById('lightbox-title');
+  const lightboxLocation = document.getElementById('lightbox-location');
+  const lightboxExif = document.getElementById('lightbox-exif');
+  const lightboxCurrent = document.getElementById('lightbox-current');
+  const lightboxTotal = document.getElementById('lightbox-total');
+  const closeBtn = document.getElementById('lightbox-close');
+  const prevBtn = document.getElementById('lightbox-prev');
+  const nextBtn = document.getElementById('lightbox-next');
+  const gridToggleBtn = document.getElementById('lightbox-grid-toggle');
+
+  function updateLightbox() {
+    if (!filteredPhotos.length) return;
+    
+    const photo = filteredPhotos[currentIndex];
+    if (!photo) return;
+
+    // Find the actual image element to get its src
+    const galleryItem = document.querySelector(`[data-photo-id="${photo.id}"]`);
+    const imgElement = galleryItem?.querySelector('img');
+    
+    if (imgElement && lightboxImage) {
+      // Use the optimized src from Astro Image
+      lightboxImage.src = imgElement.src;
+      lightboxImage.alt = photo.title;
+    }
+
+    if (lightboxTitle) lightboxTitle.textContent = photo.title;
+    if (lightboxLocation) lightboxLocation.textContent = photo.location;
+    if (lightboxCurrent) lightboxCurrent.textContent = (currentIndex + 1).toString();
+    if (lightboxTotal) lightboxTotal.textContent = filteredPhotos.length.toString();
+
+    // Update EXIF info
+    if (lightboxExif) {
+      const exifItems = [];
+      if (photo.exif.camera) exifItems.push(`<span>${photo.exif.camera}</span>`);
+      if (photo.exif.focalLength) exifItems.push(`<span>${photo.exif.focalLength}</span>`);
+      if (photo.exif.aperture) exifItems.push(`<span>${photo.exif.aperture}</span>`);
+      if (photo.exif.shutterSpeed) exifItems.push(`<span>${photo.exif.shutterSpeed}</span>`);
+      if (photo.exif.iso) exifItems.push(`<span>${photo.exif.iso}</span>`);
+      lightboxExif.innerHTML = exifItems.join('<span class="text-white/30">|</span>');
+    }
+  }
+
+  function openLightbox(photoId: string, visiblePhotoIds?: string[]) {
+    // If visiblePhotoIds provided, filter to only those photos
+    if (visiblePhotoIds && visiblePhotoIds.length > 0) {
+      filteredPhotos = allPhotos.filter(p => visiblePhotoIds.includes(p.id));
+    } else {
+      filteredPhotos = [...allPhotos];
+    }
+
+    // Find the index of the clicked photo in the filtered list
+    currentIndex = filteredPhotos.findIndex(p => p.id === photoId);
+    if (currentIndex === -1) currentIndex = 0;
+
+    if (lightbox) {
+      lightbox.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      isOpen = true;
+      updateLightbox();
+    }
+  }
+
+  function closeLightbox() {
+    if (lightbox) {
+      lightbox.classList.add('hidden');
+      document.body.style.overflow = '';
+      isOpen = false;
+    }
+  }
+
+  function navigate(direction: 'prev' | 'next') {
+    if (!filteredPhotos.length) return;
+    
+    if (direction === 'prev') {
+      currentIndex = currentIndex > 0 ? currentIndex - 1 : filteredPhotos.length - 1;
+    } else {
+      currentIndex = currentIndex < filteredPhotos.length - 1 ? currentIndex + 1 : 0;
+    }
+    updateLightbox();
+  }
+
+  // Event listeners
+  closeBtn?.addEventListener('click', closeLightbox);
+  gridToggleBtn?.addEventListener('click', closeLightbox);
+  prevBtn?.addEventListener('click', () => navigate('prev'));
+  nextBtn?.addEventListener('click', () => navigate('next'));
+
+  // Close on backdrop click
+  lightbox?.addEventListener('click', (e) => {
+    if (e.target === lightbox || (e.target as HTMLElement).id === 'lightbox') {
+      closeLightbox();
+    }
+  });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (!isOpen) return;
+    
+    switch (e.key) {
+      case 'Escape':
+        closeLightbox();
+        break;
+      case 'ArrowLeft':
+        navigate('prev');
+        break;
+      case 'ArrowRight':
+        navigate('next');
+        break;
+    }
+  });
+
+  // Listen for gallery image clicks
+  document.addEventListener('click', (e) => {
+    const wrapper = (e.target as HTMLElement).closest('.gallery-image-wrapper');
+    if (wrapper) {
+      const photoId = wrapper.getAttribute('data-photo-id');
+      if (photoId) {
+        // Get currently visible photo IDs (for filtered navigation)
+        const visibleItems = document.querySelectorAll('.gallery-image-wrapper:not(.hidden)');
+        const visibleIds = Array.from(visibleItems).map(el => el.getAttribute('data-photo-id')).filter(Boolean) as string[];
+        openLightbox(photoId, visibleIds);
+      }
+    }
+  });
+
+  // Expose functions globally for external control
+  (window as any).openLightbox = openLightbox;
+  (window as any).closeLightbox = closeLightbox;
+</script>

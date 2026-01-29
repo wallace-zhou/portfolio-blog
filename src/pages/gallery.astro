@@ -1,0 +1,139 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SidebarNav from '../components/SidebarNav.astro';
+import GalleryImage from '../components/GalleryImage.astro';
+import Lightbox from '../components/Lightbox.astro';
+import Footer from '../components/Footer.astro';
+import { photos, allTags, type PhotoTag } from '../data/photos';
+---
+
+<BaseLayout title="Gallery" description="Photography gallery showcasing landscape, cityscape, street, and automotive photography">
+  <SidebarNav />
+  
+  <main class="min-h-screen bg-primary">
+    <!-- Gallery Header -->
+    <div class="px-2 md:pl-28 md:pr-4 pt-24 md:pt-8">
+      <div class="max-w-[1800px] mx-auto">
+        <h1 class="text-display style-heading text-background mb-8">Gallery</h1>
+        
+        <!-- Tag Filter Buttons -->
+        <div class="flex flex-wrap gap-3 mb-8">
+          <button 
+            class="filter-btn active px-4 py-2 text-small style-nav border border-background/30 text-background/90 hover:bg-background/10 transition-colors rounded-sm"
+            data-tag="all"
+          >
+            All
+          </button>
+          {allTags.map((tag) => (
+            <button 
+              class="filter-btn px-4 py-2 text-small style-nav border border-background/30 text-background/70 hover:bg-background/10 transition-colors rounded-sm"
+              data-tag={tag}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-container px-2 md:pl-28 md:pr-4 pb-16">
+      <div class="gallery-grid max-w-[1800px] mx-auto">
+        {photos.map((photo, index) => (
+          <div 
+            class="gallery-item"
+            data-tags={photo.tags.join(',')}
+          >
+            <GalleryImage 
+              photo={photo} 
+              index={index}
+              loading={index < 10 ? 'eager' : 'lazy'}
+              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <Footer />
+  </main>
+
+  <Lightbox photos={photos} />
+</BaseLayout>
+
+<style>
+  .gallery-grid {
+    display: grid;
+    gap: 1rem;
+    /* Default: 2 columns on mobile */
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Masonry-style auto rows */
+  .gallery-item {
+    break-inside: avoid;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .gallery-item.hidden {
+    display: none;
+  }
+
+  /* Tablet: 3 columns */
+  @media (min-width: 768px) {
+    .gallery-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Desktop: 4 columns */
+  @media (min-width: 1024px) {
+    .gallery-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  /* Large desktop: 5 columns */
+  @media (min-width: 1280px) {
+    .gallery-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  /* Filter button active state */
+  .filter-btn.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--background);
+    border-color: var(--background);
+  }
+</style>
+
+<script>
+  // Tag filtering functionality
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  const galleryItems = document.querySelectorAll('.gallery-item');
+
+  function filterGallery(tag: string) {
+    galleryItems.forEach((item) => {
+      const itemTags = item.getAttribute('data-tags')?.split(',') || [];
+      
+      if (tag === 'all' || itemTags.includes(tag)) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  }
+
+  filterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      // Update active state
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Filter gallery
+      const tag = btn.getAttribute('data-tag') || 'all';
+      filterGallery(tag);
+    });
+  });
+</script>
