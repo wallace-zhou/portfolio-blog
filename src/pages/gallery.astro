@@ -4,7 +4,10 @@ import GalleryImage from '../components/GalleryImage.astro';
 import Lightbox from '../components/Lightbox.astro';
 import Footer from '../components/Footer.astro';
 import { Image } from 'astro:assets';
-import { photos, allTags, tagBannerPhotos, imageSources, type PhotoTag, type PhotoId } from '../data/photos';
+import { getPhotosSortedByDate, allTags, tagBannerPhotos, imageSources, type PhotoTag, type PhotoId } from '../data/photos';
+
+// Get photos sorted by date taken (chronological order)
+const photos = getPhotosSortedByDate();
 
 // Pre-generate all banner images for client-side switching
 const bannerImages: Record<string, ImageMetadata> = {};

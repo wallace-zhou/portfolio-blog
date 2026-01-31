@@ -222,3 +222,12 @@ export function getBannerImageSource(tag: PhotoTag | 'all') {
   const photoId = getBannerPhotoForTag(tag);
   return imageSources[photoId];
 }
+
+// Get photos sorted by date (descending order - newest to oldest)
+export function getPhotosSortedByDate(): PhotoMetadata[] {
+  return [...photos].sort((a, b) => {
+    const dateA = a.exif.dateTaken ? new Date(a.exif.dateTaken).getTime() : 0;
+    const dateB = b.exif.dateTaken ? new Date(b.exif.dateTaken).getTime() : 0;
+    return dateB - dateA;
+  });
+}

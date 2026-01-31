@@ -246,7 +246,8 @@ const photoData = photos.map((photo, index) => ({
       const photoId = wrapper.getAttribute('data-photo-id');
       if (photoId) {
         // Get currently visible photo IDs (for filtered navigation)
-        const visibleItems = document.querySelectorAll('.gallery-image-wrapper:not(.hidden)');
+        // Check if parent .gallery-item has .hidden class
+        const visibleItems = document.querySelectorAll('.gallery-item:not(.hidden) .gallery-image-wrapper');
         const visibleIds = Array.from(visibleItems).map(el => el.getAttribute('data-photo-id')).filter(Boolean) as string[];
         openLightbox(photoId, visibleIds);
       }
