@@ -64,7 +64,8 @@ import { photos, allTags, type PhotoTag } from '../data/photos';
 <style>
   .gallery-grid {
     /* CSS columns for true masonry layout */
-    column-count: 2;
+    /* Max 5 columns, each at least 600px wide */
+    columns: 5 600px;
     column-gap: 1rem;
   }
 
@@ -77,27 +78,6 @@ import { photos, allTags, type PhotoTag } from '../data/photos';
 
   .gallery-item.hidden {
     display: none;
-  }
-
-  /* Tablet: 3 columns */
-  @media (min-width: 768px) {
-    .gallery-grid {
-      column-count: 3;
-    }
-  }
-
-  /* Desktop: 4 columns */
-  @media (min-width: 1024px) {
-    .gallery-grid {
-      column-count: 4;
-    }
-  }
-
-  /* Large desktop: 5 columns */
-  @media (min-width: 1280px) {
-    .gallery-grid {
-      column-count: 5;
-    }
   }
 
   /* Filter button active state */
