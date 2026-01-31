@@ -19,9 +19,9 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
 <BaseLayout title="Gallery" description="Photography gallery showcasing landscape, cityscape, street, and automotive photography">
   <main class="min-h-screen bg-primary">
     <!-- Gallery Banner Header -->
-    <div class="banner-header relative w-full h-[300px] md:h-[400px] overflow-hidden">
+    <div class="banner-header relative w-full h-[300px] md:h-[400px] overflow-hidden pr-2 md:pr-4">
       <!-- Banner Images Container -->
-      <div class="banner-images absolute inset-0">
+      <div class="banner-images absolute inset-0 right-2 md:right-4">
         {Object.entries(bannerImages).map(([tag, imgSrc]) => (
           <div 
             class={`banner-image absolute inset-0 transition-opacity duration-500 ${tag === 'all' ? 'opacity-100' : 'opacity-0'}`}
