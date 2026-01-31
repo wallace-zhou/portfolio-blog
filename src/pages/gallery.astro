@@ -3,34 +3,64 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GalleryImage from '../components/GalleryImage.astro';
 import Lightbox from '../components/Lightbox.astro';
 import Footer from '../components/Footer.astro';
-import { photos, allTags, type PhotoTag } from '../data/photos';
+import { Image } from 'astro:assets';
+import { photos, allTags, tagBannerPhotos, imageSources, type PhotoTag, type PhotoId } from '../data/photos';
+
+// Pre-generate all banner images for client-side switching
+const bannerImages: Record<string, ImageMetadata> = {};
+for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
+  bannerImages[tag] = imageSources[photoId as PhotoId];
+}
 ---
 
 <BaseLayout title="Gallery" description="Photography gallery showcasing landscape, cityscape, street, and automotive photography">
   <main class="min-h-screen bg-primary">
-    <!-- Gallery Header -->
-    <div class="px-2 md:pl-28 md:pr-4 pt-24 md:pt-8">
-      <div>
-        <h1 class="text-display style-heading text-background mb-8">Gallery</h1>
-        
-        <!-- Tag Filter Buttons -->
-        <div class="flex flex-wrap gap-3 mb-8">
-          <button 
-            class="filter-btn active px-4 py-2 text-small style-nav border border-background/30 text-background/90 hover:bg-background/10 transition-colors rounded-sm"
-            data-tag="all"
+    <!-- Gallery Banner Header -->
+    <div class="banner-header relative w-full h-[300px] md:h-[400px] overflow-hidden">
+      <!-- Banner Images Container -->
+      <div class="banner-images absolute inset-0">
+        {Object.entries(bannerImages).map(([tag, imgSrc]) => (
+          <div 
+            class={`banner-image absolute inset-0 transition-opacity duration-500 ${tag === 'all' ? 'opacity-100' : 'opacity-0'}`}
+            data-banner-tag={tag}
           >
-            All
-          </button>
-          {allTags.map((tag) => (
-            <button 
-              class="filter-btn px-4 py-2 text-small style-nav border border-background/30 text-background/70 hover:bg-background/10 transition-colors rounded-sm"
-              data-tag={tag}
-            >
-              {tag}
-            </button>
-          ))}
-        </div>
+            <Image 
+              src={imgSrc}
+              alt={`${tag} photography banner`}
+              class="w-full h-full object-cover"
+              widths={[800, 1200, 1920]}
+              sizes="100vw"
+              loading="eager"
+            />
+          </div>
+        ))}
       </div>
+      
+      <!-- Dark Overlay -->
+      <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
+      
+      <!-- Banner Content -->
+      <div class="banner-content absolute inset-0 flex flex-col items-center justify-center px-4">
+        <h1 class="text-display md:text-hero style-heading text-white drop-shadow-lg">Gallery</h1>
+      </div>
+    </div>
+
+    <!-- Tag Filter Buttons -->
+    <div class="flex flex-wrap justify-center gap-3 px-4 py-6 md:py-8">
+      <button 
+        class="filter-btn active px-4 py-2 text-small style-nav border border-background/30 text-background/90 hover:bg-background/10 transition-colors rounded-sm"
+        data-tag="all"
+      >
+        All
+      </button>
+      {allTags.map((tag) => (
+        <button 
+          class="filter-btn px-4 py-2 text-small style-nav border border-background/30 text-background/70 hover:bg-background/10 transition-colors rounded-sm"
+          data-tag={tag}
+        >
+          {tag}
+        </button>
+      ))}
     </div>
 
     <!-- Gallery Grid -->
@@ -59,6 +89,24 @@ import { photos, allTags, type PhotoTag } from '../data/photos';
 </BaseLayout>
 
 <style>
+  /* Banner styles */
+  .banner-header {
+    /* Ensure banner starts from top of viewport on mobile */
+    margin-top: -6rem; /* Offset for mobile header */
+    padding-top: 6rem;
+  }
+
+  @media (min-width: 768px) {
+    .banner-header {
+      margin-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  .banner-image {
+    pointer-events: none;
+  }
+
   .gallery-grid {
     /* CSS columns for true masonry layout */
     /* Max 5 columns, each at least 600px wide */
@@ -86,9 +134,10 @@ import { photos, allTags, type PhotoTag } from '../data/photos';
 </style>
 
 <script>
-  // Tag filtering functionality
+  // Tag filtering and banner switching functionality
   const filterButtons = document.querySelectorAll('.filter-btn');
   const galleryItems = document.querySelectorAll('.gallery-item');
+  const bannerImages = document.querySelectorAll('.banner-image');
 
   function filterGallery(tag: string) {
     galleryItems.forEach((item) => {
@@ -102,15 +151,33 @@ import { photos, allTags, type PhotoTag } from '../data/photos';
     });
   }
 
+  function switchBanner(tag: string) {
+    bannerImages.forEach((banner) => {
+      const bannerTag = banner.getAttribute('data-banner-tag');
+      if (bannerTag === tag) {
+        banner.classList.remove('opacity-0');
+        banner.classList.add('opacity-100');
+      } else {
+        banner.classList.remove('opacity-100');
+        banner.classList.add('opacity-0');
+      }
+    });
+  }
+
   filterButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       // Update active state
       filterButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       
-      // Filter gallery
+      // Get selected tag
       const tag = btn.getAttribute('data-tag') || 'all';
+      
+      // Filter gallery
       filterGallery(tag);
+      
+      // Switch banner image
+      switchBanner(tag);
     });
   });
 </script>

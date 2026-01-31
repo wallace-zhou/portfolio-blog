@@ -203,3 +203,22 @@ export function getImageSource(id: PhotoId) {
 }
 
 export const allTags: PhotoTag[] = ['Landscape', 'Cityscape', 'Street', 'Car'];
+
+// TODO: Replace with custom banner photo selection per tag
+// Banner photos for each tag (should be landscape-oriented images)
+export const tagBannerPhotos: Record<PhotoTag | 'all', PhotoId> = {
+  'all': 'dsc-4517',           // Ocean Panorama - default banner
+  'Landscape': 'blog-placeholder-1',  // Golden Hour Mountains
+  'Cityscape': 'blog-placeholder-about', // City Lights
+  'Street': 'blog-placeholder-2',     // Alpine Road
+  'Car': 'blog-placeholder-4',        // Desert Canyon
+};
+
+export function getBannerPhotoForTag(tag: PhotoTag | 'all'): PhotoId {
+  return tagBannerPhotos[tag];
+}
+
+export function getBannerImageSource(tag: PhotoTag | 'all') {
+  const photoId = getBannerPhotoForTag(tag);
+  return imageSources[photoId];
+}
