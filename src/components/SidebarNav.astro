@@ -45,12 +45,12 @@ const navLinks = [
 </nav>
 
 <!-- Mobile Header -->
-<header id="mobile-header" class="fixed top-0 left-0 right-0 z-50 md:hidden">
-  <div id="mobile-header-bg" class="relative z-10 flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
+<header id="mobile-header" class="fixed top-0 left-0 right-0 z-[120] md:hidden pointer-events-none">
+  <div id="mobile-header-bg" class="relative flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
     <!-- Menu Toggle - on the left -->
     <button 
       id="menu-toggle"
-      class="text-background p-2"
+      class="text-background p-2 relative z-10 pointer-events-auto"
       aria-label="Toggle menu"
       aria-expanded="false"
     >
@@ -63,9 +63,9 @@ const navLinks = [
 
     <!-- Logo - only visible after scrolling past hero -->
     <a 
-      href="#"
+      href="/"
       id="mobile-logo"
-      class="transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none"
+      class="transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none relative z-10"
     >
       <img
         src="/logo-z.svg"
@@ -78,11 +78,11 @@ const navLinks = [
   <!-- Mobile Menu Backdrop -->
   <div 
     id="mobile-menu-backdrop" 
-    class="fixed inset-0 z-0 bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
+    class="fixed inset-0 z-[90] bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
   ></div>
 
   <!-- Mobile Menu Sidebar -->
-  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[5] bg-primary transition-transform duration-500 -translate-x-full">
+  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[95] bg-primary transition-transform duration-500 -translate-x-full pointer-events-none">
     <div class="flex flex-col items-center justify-center h-full gap-12">
       {navLinks.map((link) => (
         <a
@@ -130,9 +130,14 @@ const navLinks = [
     );
     observer.observe(heroTopLogo);
   } else {
-    // On pages without hero logo, always show nav logo
+    // On pages without hero logo, always show nav logo and set header background
     isHeroLogoVisible = false;
     updateNavLogoVisibility();
+    // Immediately add background to mobile header on non-home pages
+    if (mobileHeaderBg) {
+      mobileHeaderBg.classList.remove('bg-transparent');
+      mobileHeaderBg.classList.add('bg-primary');
+    }
   }
 
   function updateNavLogoVisibility() {
@@ -153,9 +158,9 @@ const navLinks = [
     if (mobileLogo) {
       if (showNavLogo) {
         mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
-        mobileLogo.classList.add('opacity-100', 'translate-y-0');
+        mobileLogo.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
       } else {
-        mobileLogo.classList.remove('opacity-100', 'translate-y-0');
+        mobileLogo.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
         mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
       }
     }
@@ -166,8 +171,8 @@ const navLinks = [
     const isScrolled = scrollY > 100;
     const hasScrolled = scrollY > 0;
 
-    // Mobile header background
-    if (mobileHeaderBg) {
+    // Mobile header background - only change on scroll if there's a hero section
+    if (mobileHeaderBg && heroTopLogo) {
       if (isScrolled) {
         mobileHeaderBg.classList.remove('bg-transparent');
         mobileHeaderBg.classList.add('bg-primary');
@@ -188,11 +193,11 @@ const navLinks = [
     // Toggle sidebar (slides from left)
     if (mobileMenu) {
       if (isMobileMenuOpen) {
-        mobileMenu.classList.remove('-translate-x-full');
-        mobileMenu.classList.add('translate-x-0');
+        mobileMenu.classList.remove('-translate-x-full', 'pointer-events-none');
+        mobileMenu.classList.add('translate-x-0', 'pointer-events-auto');
       } else {
-        mobileMenu.classList.remove('translate-x-0');
-        mobileMenu.classList.add('-translate-x-full');
+        mobileMenu.classList.remove('translate-x-0', 'pointer-events-auto');
+        mobileMenu.classList.add('-translate-x-full', 'pointer-events-none');
       }
     }
 

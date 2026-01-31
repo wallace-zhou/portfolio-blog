@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SidebarNav from '../components/SidebarNav.astro';
 import GalleryImage from '../components/GalleryImage.astro';
 import Lightbox from '../components/Lightbox.astro';
 import Footer from '../components/Footer.astro';
@@ -8,8 +7,6 @@ import { photos, allTags, type PhotoTag } from '../data/photos';
 ---
 
 <BaseLayout title="Gallery" description="Photography gallery showcasing landscape, cityscape, street, and automotive photography">
-  <SidebarNav />
-  
   <main class="min-h-screen bg-primary">
     <!-- Gallery Header -->
     <div class="px-2 md:pl-28 md:pr-4 pt-24 md:pt-8">
