@@ -3,8 +3,8 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "npm run extract-exif && astro dev",
+    "build": "npm run extract-exif && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "extract-exif": "node scripts/extract-exif.js"

@@ -22,23 +22,23 @@ export interface PhotoMetadata {
 }
 
 // Import all images for type-safe references
-import blogPlaceholder1 from '../assets/blog-placeholder-1.jpg';
-import blogPlaceholder2 from '../assets/blog-placeholder-2.jpg';
-import blogPlaceholder3 from '../assets/blog-placeholder-3.jpg';
-import blogPlaceholder4 from '../assets/blog-placeholder-4.jpg';
-import blogPlaceholder6 from '../assets/blog-placeholder-6.jpg';
-import blogPlaceholderAbout from '../assets/blog-placeholder-about.jpg';
+import blogplaceholder1 from '../assets/blog-placeholder-1.jpg';
+import blogplaceholder2 from '../assets/blog-placeholder-2.jpg';
+import blogplaceholder3 from '../assets/blog-placeholder-3.jpg';
+import blogplaceholder4 from '../assets/blog-placeholder-4.jpg';
+import blogplaceholder6 from '../assets/blog-placeholder-6.jpg';
+import blogplaceholderabout from '../assets/blog-placeholder-about.jpg';
 import dsc4517 from '../assets/DSC_4517.jpg';
 import dsc9074 from '../assets/DSC_9074.jpg';
 
 // Image source mapping for dynamic imports
 export const imageSources = {
-  'blog-placeholder-1': blogPlaceholder1,
-  'blog-placeholder-2': blogPlaceholder2,
-  'blog-placeholder-3': blogPlaceholder3,
-  'blog-placeholder-4': blogPlaceholder4,
-  'blog-placeholder-6': blogPlaceholder6,
-  'blog-placeholder-about': blogPlaceholderAbout,
+  'blog-placeholder-1': blogplaceholder1,
+  'blog-placeholder-2': blogplaceholder2,
+  'blog-placeholder-3': blogplaceholder3,
+  'blog-placeholder-4': blogplaceholder4,
+  'blog-placeholder-6': blogplaceholder6,
+  'blog-placeholder-about': blogplaceholderabout,
   'dsc-4517': dsc4517,
   'dsc-9074': dsc9074,
 } as const;
@@ -55,7 +55,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Landscape'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '18.0-35.0 mm f/3.5-4.5',
       focalLength: '18mm',
       aperture: 'f/8',
@@ -72,7 +72,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Landscape', 'Street'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '18.0-35.0 mm f/3.5-4.5',
       focalLength: '24mm',
       aperture: 'f/8',
@@ -89,7 +89,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Landscape'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '18.0-35.0 mm f/3.5-4.5',
       focalLength: '35mm',
       aperture: 'f/8',
@@ -106,7 +106,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Landscape'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '18.0-35.0 mm f/3.5-4.5',
       focalLength: '18mm',
       aperture: 'f/8',
@@ -123,7 +123,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Landscape'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '50.0 mm f/1.8',
       focalLength: '50mm',
       aperture: 'f/8',
@@ -140,7 +140,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Cityscape', 'Street'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '18.0-35.0 mm f/3.5-4.5',
       focalLength: '18mm',
       aperture: 'f/8',
@@ -157,7 +157,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Landscape'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '50.0 mm f/1.8',
       focalLength: '50mm',
       aperture: 'f/8',
@@ -174,7 +174,7 @@ export const photos: PhotoMetadata[] = [
     tags: ['Street', 'Cityscape'],
     isHero: true,
     exif: {
-      camera: 'NIKON CORPORATION NIKON D7200',
+      camera: 'NIKON D7200',
       lens: '105.0 mm f/2.8',
       focalLength: '105mm',
       aperture: 'f/2.8',
