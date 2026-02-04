@@ -120,9 +120,11 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
   }
 
   .gallery-grid {
-    /* CSS columns for true masonry layout */
-    /* Max 5 columns, each at least 600px wide */
-    columns: 5 600px;
+    /* CSS columns for true masonry layout with fluid scaling */
+    /* Columns scale from 250px on small screens to 600px on large screens */
+    /* Using clamp for responsive column width: min(250px) to max(600px), with 20vw as the ideal flexible value */
+    column-count: auto;
+    column-width: clamp(400px, 20vw, 600px);
     column-gap: 1rem;
   }
 
