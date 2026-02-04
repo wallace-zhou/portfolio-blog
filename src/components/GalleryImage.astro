@@ -44,11 +44,15 @@ const imageSrc = imageSources[photo.id as PhotoId];
   .gallery-image-wrapper {
     /* Ensure image fills container properly */
     display: block;
+    /* Contain intrinsic size helps browser with layout before image loads */
+    contain: layout style;
   }
   
   .gallery-image-wrapper img {
     display: block;
     width: 100%;
     height: auto;
+    /* Ensure image doesn't cause layout shifts */
+    content-visibility: auto;
   }
 </style>

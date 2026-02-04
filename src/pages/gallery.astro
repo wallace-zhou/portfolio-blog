@@ -148,6 +148,36 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
 </style>
 
 <script>
+  // Force reflow after all images are loaded to fix CSS columns rendering issue
+  // This addresses a browser quirk where images in right columns may not display until scroll
+  function forceGalleryReflow() {
+    const galleryGrid = document.querySelector('.gallery-grid') as HTMLElement;
+    if (galleryGrid) {
+      // Trigger reflow by reading and modifying a layout property
+      galleryGrid.style.display = 'none';
+      void galleryGrid.offsetHeight; // Force synchronous reflow
+      galleryGrid.style.display = '';
+    }
+  }
+
+  // Run reflow fix after window load (all images loaded) and a small delay
+  if (document.readyState === 'complete') {
+    // Page already loaded, run immediately with small delay for rendering
+    setTimeout(forceGalleryReflow, 50);
+  } else {
+    window.addEventListener('load', () => {
+      // Small delay to ensure all rendering is complete
+      setTimeout(forceGalleryReflow, 50);
+    });
+  }
+
+  // Also run on DOMContentLoaded as a fallback for faster initial render
+  document.addEventListener('DOMContentLoaded', () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(forceGalleryReflow);
+    });
+  });
+
   // Tag filtering and banner switching functionality
   const filterButtons = document.querySelectorAll('.filter-btn');
   const galleryItems = document.querySelectorAll('.gallery-item');
