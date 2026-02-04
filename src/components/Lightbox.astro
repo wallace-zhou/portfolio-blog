@@ -1,6 +1,7 @@
 ---
 import type { PhotoMetadata, PhotoId } from '../data/photos';
 import { imageSources } from '../data/photos';
+import { Image } from 'astro:assets';
 
 interface Props {
   photos: PhotoMetadata[];
@@ -66,7 +67,7 @@ const photoData = photos.map((photo, index) => ({
 
   <button 
     id="lightbox-next"
-    class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-colors"
+    class="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center text-white/60 hover:text-white transition-all duration-300"
     aria-label="Next image"
   >
     <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -76,12 +77,24 @@ const photoData = photos.map((photo, index) => ({
 
   <!-- Main image container -->
   <div id="lightbox-image-container" class="absolute inset-0 flex items-center justify-center p-16 pb-24 md:p-20 md:pb-28 transition-all duration-300">
-    <img 
-      id="lightbox-image"
-      src=""
-      alt=""
-      class="max-w-full max-h-full object-contain transition-opacity duration-300"
-    />
+    <!-- Pre-rendered Astro Image components for each photo -->
+    {photos.map((photo) => (
+      <div 
+        id={`lightbox-image-${photo.id}`}
+        class="hidden w-full h-full flex items-center justify-center"
+        data-photo-id={photo.id}
+      >
+        <Image
+          src={imageSources[photo.id as PhotoId]}
+          alt={photo.title}
+          class="max-w-full max-h-full object-contain transition-opacity duration-300"
+          quality="high"
+          widths={[800, 1200, 1600, 2000]}
+          sizes="(max-width: 768px) 90vw, (max-width: 1024px) 80vw, 70vw"
+          loading="lazy"
+        />
+      </div>
+    ))}
   </div>
 
   <!-- Title and location overlay (bottom left) -->
@@ -189,7 +202,6 @@ const photoData = photos.map((photo, index) => ({
 
   // DOM elements
   const lightbox = document.getElementById('lightbox');
-  const lightboxImage = document.getElementById('lightbox-image') as HTMLImageElement;
   const lightboxImageContainer = document.getElementById('lightbox-image-container');
   const lightboxTitle = document.getElementById('lightbox-title');
   const lightboxLocation = document.getElementById('lightbox-location');
@@ -219,15 +231,15 @@ const photoData = photos.map((photo, index) => ({
     const photo = filteredPhotos[currentIndex];
     if (!photo) return;
 
-    // Find the actual image element to get its src
-    const galleryItem = document.querySelector(`[data-photo-id="${photo.id}"]`);
-    const imgElement = galleryItem?.querySelector('img');
-    
-    if (imgElement && lightboxImage) {
-      // Use the optimized src from Astro Image
-      lightboxImage.src = imgElement.src;
-      lightboxImage.alt = photo.title;
-    }
+    // Hide all image containers and show only the current one
+    const allImageContainers = lightboxImageContainer?.querySelectorAll('[data-photo-id]');
+    allImageContainers?.forEach((container) => {
+      if (container.getAttribute('data-photo-id') === photo.id) {
+        container.classList.remove('hidden');
+      } else {
+        container.classList.add('hidden');
+      }
+    });
 
     // Update caption
     if (lightboxTitle) lightboxTitle.textContent = photo.title;
@@ -267,6 +279,10 @@ const photoData = photos.map((photo, index) => ({
       if (lightboxImageContainer) {
         lightboxImageContainer.style.right = '320px'; // 80 * 4 = 320px (w-80 = 20rem)
       }
+      // Move next button to stay visible between panel and image
+      if (nextBtn) {
+        nextBtn.style.right = '336px'; // 320px (panel width) + 16px (original right-4)
+      }
       // Add visual feedback to toggle button
       infoToggleBtn?.classList.add('bg-white/20', 'text-white');
       infoToggleBtn?.classList.remove('text-white/80');
@@ -276,6 +292,10 @@ const photoData = photos.map((photo, index) => ({
       // Reset image container
       if (lightboxImageContainer) {
         lightboxImageContainer.style.right = '0';
+      }
+      // Reset next button position
+      if (nextBtn) {
+        nextBtn.style.right = '1rem'; // Back to right-4 (1rem = 16px)
       }
       // Remove visual feedback from toggle button
       infoToggleBtn?.classList.remove('bg-white/20', 'text-white');
@@ -346,7 +366,12 @@ const photoData = photos.map((photo, index) => ({
     }
     
     // Close info panel if it's open and click is outside the panel
-    if (isInfoPanelOpen && !infoPanel?.contains(target) && !infoToggleBtn?.contains(target)) {
+    // Don't close when clicking navigation buttons
+    if (isInfoPanelOpen && 
+        !infoPanel?.contains(target) && 
+        !infoToggleBtn?.contains(target) &&
+        !nextBtn?.contains(target) &&
+        !prevBtn?.contains(target)) {
       closeInfoPanel();
     }
   });

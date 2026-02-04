@@ -96,12 +96,21 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
   .banner-header {
     /* Ensure banner starts from top of viewport on mobile */
     margin-top: -6rem; /* Offset for mobile header */
-    padding-top: 6rem;
   }
 
   @media (min-width: 768px) {
     .banner-header {
       margin-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  .banner-content {
+    padding-top: 6rem;
+  }
+
+  @media (min-width: 768px) {
+    .banner-content {
       padding-top: 0;
     }
   }
