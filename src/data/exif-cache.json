@@ -1,0 +1,90 @@
+{
+  "blog-placeholder-1.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "18.0-35.0 mm f/3.5-4.5",
+    "focalLength": "18mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/250s",
+    "iso": "ISO 100",
+    "dateTaken": "2025-12-21",
+    "width": 5621,
+    "height": 3747
+  },
+  "blog-placeholder-2.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "18.0-35.0 mm f/3.5-4.5",
+    "focalLength": "24mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/500s",
+    "iso": "ISO 400",
+    "dateTaken": "2025-12-21",
+    "width": 6000,
+    "height": 4000
+  },
+  "blog-placeholder-3.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "18.0-35.0 mm f/3.5-4.5",
+    "focalLength": "35mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/80s",
+    "iso": "ISO 100",
+    "dateTaken": "2025-12-22",
+    "width": 4000,
+    "height": 6000
+  },
+  "blog-placeholder-4.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "18.0-35.0 mm f/3.5-4.5",
+    "focalLength": "18mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/80s",
+    "iso": "ISO 100",
+    "dateTaken": "2025-12-25",
+    "width": 5701,
+    "height": 3801
+  },
+  "blog-placeholder-6.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "50.0 mm f/1.8",
+    "focalLength": "50mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/500s",
+    "iso": "ISO 100",
+    "dateTaken": "2025-12-28",
+    "width": 6000,
+    "height": 4000
+  },
+  "blog-placeholder-about.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "18.0-35.0 mm f/3.5-4.5",
+    "focalLength": "18mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/60s",
+    "iso": "ISO 280",
+    "dateTaken": "2025-12-25",
+    "width": 4000,
+    "height": 6000
+  },
+  "DSC_4517.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "50.0 mm f/1.8",
+    "focalLength": "50mm",
+    "aperture": "f/8",
+    "shutterSpeed": "1/200s",
+    "iso": "ISO 100",
+    "dateTaken": "2025-07-12",
+    "width": 6000,
+    "height": 3000
+  },
+  "DSC_9074.jpg": {
+    "camera": "NIKON D7200",
+    "lens": "105.0 mm f/2.8",
+    "focalLength": "105mm",
+    "aperture": "f/2.8",
+    "shutterSpeed": "1/640s",
+    "iso": "ISO 100",
+    "dateTaken": "2025-12-22",
+    "width": 4000,
+    "height": 6000
+  }
+}

@@ -8,73 +8,93 @@ const __dirname = path.dirname(__filename);
 
 const assetsDir = path.join(__dirname, '..', 'src', 'assets');
 const photosFilePath = path.join(__dirname, '..', 'src', 'data', 'photos.ts');
+const cacheFilePath = path.join(__dirname, '..', 'src', 'data', 'exif-cache.json');
 
 // Get all jpg files from assets directory
+if (!fs.existsSync(assetsDir)) {
+  console.log(`Note: Assets directory not found at ${assetsDir}, skipping EXIF extraction`);
+  process.exit(0);
+}
+
 const files = fs.readdirSync(assetsDir).filter(file => 
   file.toLowerCase().endsWith('.jpg') || file.toLowerCase().endsWith('.jpeg')
 );
 
-console.log('Extracting EXIF data from images...');
+// Load existing EXIF cache
+let exifCache = {};
+try {
+  exifCache = JSON.parse(fs.readFileSync(cacheFilePath, 'utf-8'));
+} catch {
+  // Cache doesn't exist yet; will be created after extraction
+}
 
-// Read existing photos.ts to preserve manual data
+const newFiles = files.filter(file => !exifCache[file]);
+
+if (newFiles.length === 0) {
+  console.log('No new images found, skipping EXIF extraction');
+} else {
+  console.log(`Extracting EXIF data from ${newFiles.length} new image(s)...`);
+
+  for (const file of newFiles) {
+    const filePath = path.join(assetsDir, file);
+    const buffer = fs.readFileSync(filePath);
+
+    try {
+      const parser = ExifParser.create(buffer);
+      const result = parser.parse();
+      const tags = result.tags;
+
+      exifCache[file] = {
+        camera: tags.Model || null,
+        lens: tags.LensModel || null,
+        focalLength: tags.FocalLength ? `${tags.FocalLength}mm` : null,
+        aperture: tags.FNumber ? `f/${tags.FNumber}` : null,
+        shutterSpeed: tags.ExposureTime ? formatShutterSpeed(tags.ExposureTime) : null,
+        iso: tags.ISO ? `ISO ${tags.ISO}` : null,
+        dateTaken: tags.DateTimeOriginal ? new Date(tags.DateTimeOriginal * 1000).toISOString().split('T')[0] : null,
+        width: result.imageSize?.width || null,
+        height: result.imageSize?.height || null,
+      };
+
+      console.log(`  ✓ ${file}`);
+    } catch (error) {
+      console.log(`  ⚠ ${file}: Error parsing EXIF - ${error.message}`);
+      exifCache[file] = { error: error.message };
+    }
+  }
+
+  fs.writeFileSync(cacheFilePath, JSON.stringify(exifCache, null, 2), 'utf-8');
+  console.log(`✓ Cache updated at ${cacheFilePath}`);
+}
+
+// Read existing photos.ts to preserve manual metadata (title, location, tags, isHero)
 let existingPhotos = new Map();
 try {
   const photosContent = fs.readFileSync(photosFilePath, 'utf-8');
   const photosMatch = photosContent.match(/export const photos: PhotoMetadata\[\] = \[([\s\S]*?)\];/);
-  
+
   if (photosMatch) {
-    // Parse existing photo objects to preserve title, location, tags, isHero
     const photosArray = photosMatch[1];
     const photoRegex = /{\s*id:\s*'([^']+)',\s*filename:\s*'([^']+)',\s*title:\s*'([^']*)',\s*location:\s*'([^']*)',\s*tags:\s*\[([^\]]*)\],\s*isHero:\s*(true|false)/g;
-    
+
     let match;
     while ((match = photoRegex.exec(photosArray)) !== null) {
       const [, id, filename, title, location, tagsStr, isHero] = match;
       const tags = tagsStr.split(',').map(t => t.trim().replace(/'/g, '')).filter(t => t);
-      
-      existingPhotos.set(filename, {
-        id,
-        title,
-        location,
-        tags,
-        isHero: isHero === 'true'
-      });
+      existingPhotos.set(filename, { id, title, location, tags, isHero: isHero === 'true' });
     }
   }
-} catch (error) {
+} catch {
   console.log('Note: Could not read existing photos.ts, will create new entries');
 }
 
-const results = [];
-
-for (const file of files) {
-  const filePath = path.join(assetsDir, file);
-  const buffer = fs.readFileSync(filePath);
-  
-  try {
-    const parser = ExifParser.create(buffer);
-    const result = parser.parse();
-    const tags = result.tags;
-    
-    const exifData = {
-      file: file,
-      camera: tags.Model || undefined,
-      lens: tags.LensModel || undefined,
-      focalLength: tags.FocalLength ? `${tags.FocalLength}mm` : undefined,
-      aperture: tags.FNumber ? `f/${tags.FNumber}` : undefined,
-      shutterSpeed: tags.ExposureTime ? formatShutterSpeed(tags.ExposureTime) : undefined,
-      iso: tags.ISO ? `ISO ${tags.ISO}` : undefined,
-      dateTaken: tags.DateTimeOriginal ? new Date(tags.DateTimeOriginal * 1000).toISOString().split('T')[0] : undefined,
-      width: result.imageSize?.width,
-      height: result.imageSize?.height,
-    };
-    
-    results.push(exifData);
-  } catch (error) {
-    console.log(`⚠ ${file}: Error parsing EXIF - ${error.message}`);
-    results.push({ file, error: error.message });
-  }
-}
+// Build results from cache (only for files that exist in assets)
+const results = files.map(file => {
+  const cached = exifCache[file];
+  if (!cached) return { file, error: 'Not in cache' };
+  if (cached.error) return { file, error: cached.error };
+  return { file, ...cached };
+});
 
 // Generate image imports
 const imageImports = [];
@@ -82,10 +102,10 @@ const imageSources = [];
 
 for (const data of results) {
   if (data.error) continue;
-  
+
   const id = data.file.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]/g, '-');
   const varName = id.replace(/-/g, '');
-  
+
   imageImports.push(`import ${varName} from '../assets/${data.file}';`);
   imageSources.push(`  '${id}': ${varName},`);
 }
@@ -98,18 +118,18 @@ for (const data of results) {
     photoEntries.push(`  // ${data.file} - Error: ${data.error}`);
     continue;
   }
-  
+
   const id = data.file.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]/g, '-');
   const existing = existingPhotos.get(data.file);
-  
-  // Use existing data if available, otherwise use defaults
+
   const title = existing?.title || '';
   const location = existing?.location || '';
   const tags = existing?.tags || [];
   const isHero = existing?.isHero !== undefined ? existing.isHero : true;
-  
+
   const tagsStr = tags.length > 0 ? tags.map(t => `'${t}'`).join(', ') : '';
-  
+  const v = (val) => val ? `'${val}'` : 'undefined';
+
   photoEntries.push(`  {
     id: '${id}',
     filename: '${data.file}',
@@ -118,13 +138,13 @@ for (const data of results) {
     tags: [${tagsStr}],
     isHero: ${isHero},
     exif: {
-      camera: ${data.camera ? `'${data.camera}'` : 'undefined'},
-      lens: ${data.lens ? `'${data.lens}'` : 'undefined'},
-      focalLength: ${data.focalLength ? `'${data.focalLength}'` : 'undefined'},
-      aperture: ${data.aperture ? `'${data.aperture}'` : 'undefined'},
-      shutterSpeed: ${data.shutterSpeed ? `'${data.shutterSpeed}'` : 'undefined'},
-      iso: ${data.iso ? `'${data.iso}'` : 'undefined'},
-      dateTaken: ${data.dateTaken ? `'${data.dateTaken}'` : 'undefined'},
+      camera: ${v(data.camera)},
+      lens: ${v(data.lens)},
+      focalLength: ${v(data.focalLength)},
+      aperture: ${v(data.aperture)},
+      shutterSpeed: ${v(data.shutterSpeed)},
+      iso: ${v(data.iso)},
+      dateTaken: ${v(data.dateTaken)},
     },
   },`);
 }
@@ -219,11 +239,11 @@ export function getPhotosSortedByDate(): PhotoMetadata[] {
 // Write to photos.ts
 fs.writeFileSync(photosFilePath, photosContent, 'utf-8');
 
-console.log(`✓ Successfully updated ${photosFilePath}`);
-console.log(`✓ Processed ${results.filter(r => !r.error).length} images`);
-
-if (results.some(r => r.error)) {
-  console.log(`⚠ ${results.filter(r => r.error).length} images had errors`);
+const successCount = results.filter(r => !r.error).length;
+const errorCount = results.filter(r => r.error).length;
+console.log(`✓ photos.ts updated (${successCount} images total, ${newFiles.length} newly extracted)`);
+if (errorCount > 0) {
+  console.log(`⚠ ${errorCount} image(s) had errors`);
 }
 
 function formatShutterSpeed(seconds) {
