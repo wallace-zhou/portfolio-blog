@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import GalleryImage from '../components/GalleryImage.astro';
 import Lightbox from '../components/Lightbox.astro';
 import Footer from '../components/Footer.astro';
+import { Masonry } from 'astro-masonry';
 import { Image } from 'astro:assets';
 import { getPhotosSortedByDate, allTags, tagBannerPhotos, imageSources, type PhotoTag, type PhotoId } from '../data/photos';
 
@@ -68,7 +69,11 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
 
     <!-- Gallery Grid -->
     <div class="gallery-container px-2 md:pl-28 md:pr-4 pb-16">
-      <div class="gallery-grid">
+      <Masonry
+        breakpointCols={{ default: 5, 2000: 4, 1600: 3, 1200: 2, 800: 1 }}
+        class="flex gap-4"
+        columnClass="masonry-col flex flex-col gap-4"
+      >
         {photos.map((photo, index) => (
           <div 
             class="gallery-item"
@@ -78,11 +83,11 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
               photo={photo} 
               index={index}
               loading={index < 10 ? 'eager' : 'lazy'}
-              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, (max-width: 1280px) 25vw, 20vw"
+              sizes="(max-width: 800px) 100vw, (max-width: 1200px) 50vw, (max-width: 1600px) 33vw, (max-width: 2000px) 25vw, 20vw"
             />
           </div>
         ))}
-      </div>
+      </Masonry>
     </div>
 
     <Footer />
@@ -119,19 +124,7 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
     pointer-events: none;
   }
 
-  .gallery-grid {
-    /* CSS columns for true masonry layout with fluid scaling */
-    /* Columns scale from 250px on small screens to 600px on large screens */
-    /* Using clamp for responsive column width: min(250px) to max(600px), with 20vw as the ideal flexible value */
-    column-count: auto;
-    column-width: clamp(400px, 20vw, 600px);
-    column-gap: 1rem;
-  }
-
-  /* Masonry-style items */
   .gallery-item {
-    break-inside: avoid;
-    margin-bottom: 1rem;
     transition: opacity 0.3s ease, transform 0.3s ease;
   }
 
@@ -148,36 +141,6 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
 </style>
 
 <script>
-  // Force reflow after all images are loaded to fix CSS columns rendering issue
-  // This addresses a browser quirk where images in right columns may not display until scroll
-  function forceGalleryReflow() {
-    const galleryGrid = document.querySelector('.gallery-grid') as HTMLElement;
-    if (galleryGrid) {
-      // Trigger reflow by reading and modifying a layout property
-      galleryGrid.style.display = 'none';
-      void galleryGrid.offsetHeight; // Force synchronous reflow
-      galleryGrid.style.display = '';
-    }
-  }
-
-  // Run reflow fix after window load (all images loaded) and a small delay
-  if (document.readyState === 'complete') {
-    // Page already loaded, run immediately with small delay for rendering
-    setTimeout(forceGalleryReflow, 50);
-  } else {
-    window.addEventListener('load', () => {
-      // Small delay to ensure all rendering is complete
-      setTimeout(forceGalleryReflow, 50);
-    });
-  }
-
-  // Also run on DOMContentLoaded as a fallback for faster initial render
-  document.addEventListener('DOMContentLoaded', () => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(forceGalleryReflow);
-    });
-  });
-
   // Tag filtering and banner switching functionality
   const filterButtons = document.querySelectorAll('.filter-btn');
   const galleryItems = document.querySelectorAll('.gallery-item');
@@ -186,12 +149,17 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
   function filterGallery(tag: string) {
     galleryItems.forEach((item) => {
       const itemTags = item.getAttribute('data-tags')?.split(',') || [];
-      
       if (tag === 'all' || itemTags.includes(tag)) {
         item.classList.remove('hidden');
       } else {
         item.classList.add('hidden');
       }
+    });
+
+    // Hide columns that have no visible items to avoid empty gaps
+    document.querySelectorAll('.masonry-col').forEach((col) => {
+      const hasVisible = col.querySelector('.gallery-item:not(.hidden)');
+      (col as HTMLElement).style.display = hasVisible ? '' : 'none';
     });
   }
 
