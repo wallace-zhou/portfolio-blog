@@ -4,6 +4,16 @@
 @import "tailwindcss";
 
 :root {
+  /* Z-index scale — edit values only here.
+     Sidebar must be ≥ 50 to paint above gallery stacking contexts (will-change: transform, opacity).
+     Lightbox must be above mobile-header so it truly overlays everything. */
+  --z-header: 10;
+  --z-sidebar: 50;
+  --z-mobile-backdrop: 90;
+  --z-mobile-menu: 95;
+  --z-mobile-header: 110;
+  --z-lightbox: 120;
+
   /* Pure white and pure black text, dark green and tan backgrounds */
   --background: oklch(1 0 0);
   --foreground: oklch(0 0 0);

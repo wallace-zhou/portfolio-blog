@@ -16,7 +16,7 @@ const navLinks = [
 <!-- Desktop Sidebar -->
 <nav 
   id="desktop-nav"
-  class="fixed left-0 top-0 h-screen w-28 z-50 hidden md:flex flex-col items-center py-8 bg-primary"
+  class="fixed left-0 top-0 h-screen w-28 z-[var(--z-sidebar)] hidden md:flex flex-col items-center py-8 bg-primary"
 >
   <!-- Logo - only visible after scrolling past hero -->
   <a 
@@ -45,7 +45,7 @@ const navLinks = [
 </nav>
 
 <!-- Mobile Header -->
-<header id="mobile-header" class="fixed top-0 left-0 right-0 z-[120] md:hidden pointer-events-none">
+<header id="mobile-header" class="fixed top-0 left-0 right-0 z-[var(--z-mobile-header)] md:hidden pointer-events-none">
   <div id="mobile-header-bg" class="relative flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
     <!-- Menu Toggle - on the left -->
     <button 
@@ -78,11 +78,11 @@ const navLinks = [
   <!-- Mobile Menu Backdrop -->
   <div 
     id="mobile-menu-backdrop" 
-    class="fixed inset-0 z-[90] bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
+    class="fixed inset-0 z-[var(--z-mobile-backdrop)] bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
   ></div>
 
   <!-- Mobile Menu Sidebar -->
-  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[95] bg-primary transition-transform duration-500 -translate-x-full pointer-events-none">
+  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[var(--z-mobile-menu)] bg-primary transition-transform duration-500 -translate-x-full pointer-events-none">
     <div class="flex flex-col items-center justify-center h-full gap-12">
       {navLinks.map((link) => (
         <a
