@@ -20,5 +20,8 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
+# generated build artifacts
+src/data/exif-cache.json
+
 # jetbrains setting folder
 .idea/

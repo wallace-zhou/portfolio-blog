@@ -1,4 +1,3 @@
-// Photo tagging and metadata system
 export type PhotoTag = 'Landscape' | 'Cityscape' | 'Street' | 'Car';
 
 export interface PhotoExif {
@@ -21,6 +20,38 @@ export interface PhotoMetadata {
   exif: PhotoExif;
 }
 
+// Hand-curated metadata — edit photo-meta.json to add titles, locations, tags, hero status
+import photoMetaRaw from './photo-meta.json';
+// Auto-generated EXIF cache — produced by `npm run extract-exif`, gitignored
+import exifCacheRaw from './exif-cache.json';
+
+type PhotoMetaEntry = {
+  title: string;
+  location: string;
+  tags: PhotoTag[];
+  isHero: boolean;
+};
+
+type ExifCacheEntry = {
+  camera?: string | null;
+  lens?: string | null;
+  focalLength?: string | null;
+  aperture?: string | null;
+  shutterSpeed?: string | null;
+  iso?: string | null;
+  dateTaken?: string | null;
+  width?: number | null;
+  height?: number | null;
+  error?: string;
+};
+
+const photoMeta = photoMetaRaw as Record<string, PhotoMetaEntry>;
+const exifCache = exifCacheRaw as Record<string, ExifCacheEntry>;
+
+function filenameToId(filename: string): string {
+  return filename.replace(/\.[^.]+$/, '').toLowerCase().replace(/[^a-z0-9]/g, '-');
+}
+
 // Import all images for type-safe references
 import blogplaceholder1 from '../assets/blog-placeholder-1.jpg';
 import blogplaceholder2 from '../assets/blog-placeholder-2.jpg';
@@ -31,7 +62,6 @@ import blogplaceholderabout from '../assets/blog-placeholder-about.jpg';
 import dsc4517 from '../assets/DSC_4517.jpg';
 import dsc9074 from '../assets/DSC_9074.jpg';
 
-// Image source mapping for dynamic imports
 export const imageSources = {
   'blog-placeholder-1': blogplaceholder1,
   'blog-placeholder-2': blogplaceholder2,
@@ -45,147 +75,33 @@ export const imageSources = {
 
 export type PhotoId = keyof typeof imageSources;
 
-// Photo metadata with EXIF data extracted from images
-export const photos: PhotoMetadata[] = [
-  {
-    id: 'blog-placeholder-1',
-    filename: 'blog-placeholder-1.jpg',
-    title: 'Golden Hour Mountains',
-    location: 'Colorado, USA',
-    tags: ['Landscape'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '18.0-35.0 mm f/3.5-4.5',
-      focalLength: '18mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/250s',
-      iso: 'ISO 100',
-      dateTaken: '2025-12-21',
-    },
-  },
-  {
-    id: 'blog-placeholder-2',
-    filename: 'blog-placeholder-2.jpg',
-    title: 'Alpine Road',
-    location: 'Eastern Sierra, California',
-    tags: ['Landscape', 'Street'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '18.0-35.0 mm f/3.5-4.5',
-      focalLength: '24mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/500s',
-      iso: 'ISO 400',
-      dateTaken: '2025-12-21',
-    },
-  },
-  {
-    id: 'blog-placeholder-3',
-    filename: 'blog-placeholder-3.jpg',
-    title: 'Misty Forest',
-    location: 'Pacific Northwest',
-    tags: ['Landscape'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '18.0-35.0 mm f/3.5-4.5',
-      focalLength: '35mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/80s',
-      iso: 'ISO 100',
-      dateTaken: '2025-12-22',
-    },
-  },
-  {
-    id: 'blog-placeholder-4',
-    filename: 'blog-placeholder-4.jpg',
-    title: 'Desert Canyon',
-    location: 'Utah, USA',
-    tags: ['Landscape'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '18.0-35.0 mm f/3.5-4.5',
-      focalLength: '18mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/80s',
-      iso: 'ISO 100',
-      dateTaken: '2025-12-25',
-    },
-  },
-  {
-    id: 'blog-placeholder-6',
-    filename: 'blog-placeholder-6.jpg',
-    title: 'Sunset Valley',
-    location: 'Arizona, USA',
-    tags: ['Landscape'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '50.0 mm f/1.8',
-      focalLength: '50mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/500s',
-      iso: 'ISO 100',
-      dateTaken: '2025-12-28',
-    },
-  },
-  {
-    id: 'blog-placeholder-about',
-    filename: 'blog-placeholder-about.jpg',
-    title: 'City Lights',
-    location: 'New York, USA',
-    tags: ['Cityscape', 'Street'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '18.0-35.0 mm f/3.5-4.5',
-      focalLength: '18mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/60s',
-      iso: 'ISO 280',
-      dateTaken: '2025-12-25',
-    },
-  },
-  {
-    id: 'dsc-4517',
-    filename: 'DSC_4517.jpg',
-    title: 'Ocean Panorama',
-    location: 'Big Sur, California',
-    tags: ['Landscape'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '50.0 mm f/1.8',
-      focalLength: '50mm',
-      aperture: 'f/8',
-      shutterSpeed: '1/200s',
-      iso: 'ISO 100',
-      dateTaken: '2025-07-12',
-    },
-  },
-  {
-    id: 'dsc-9074',
-    filename: 'DSC_9074.jpg',
-    title: 'Urban Exploration',
-    location: 'San Francisco, USA',
-    tags: ['Street', 'Cityscape'],
-    isHero: true,
-    exif: {
-      camera: 'NIKON D7200',
-      lens: '105.0 mm f/2.8',
-      focalLength: '105mm',
-      aperture: 'f/2.8',
-      shutterSpeed: '1/640s',
-      iso: 'ISO 100',
-      dateTaken: '2025-12-22',
-    },
-  },
-];
+// Merge exif cache + manual metadata into the photos array at build time.
+// Only includes files that have both an exif cache entry and an image import.
+export const photos: PhotoMetadata[] = Object.entries(exifCache)
+  .filter(([, entry]) => !entry.error)
+  .map(([filename, exif]) => {
+    const id = filenameToId(filename);
+    const meta = photoMeta[filename] ?? { title: '', location: '', tags: [], isHero: false };
+    return {
+      id,
+      filename,
+      title: meta.title,
+      location: meta.location,
+      tags: meta.tags,
+      isHero: meta.isHero,
+      exif: {
+        camera: exif.camera ?? undefined,
+        lens: exif.lens ?? undefined,
+        focalLength: exif.focalLength ?? undefined,
+        aperture: exif.aperture ?? undefined,
+        shutterSpeed: exif.shutterSpeed ?? undefined,
+        iso: exif.iso ?? undefined,
+        dateTaken: exif.dateTaken ?? undefined,
+      },
+    };
+  })
+  .filter(photo => photo.id in imageSources);
 
-// Helper functions
 export function getHeroPhotos(): PhotoMetadata[] {
   return photos.filter(photo => photo.isHero);
 }
@@ -204,14 +120,12 @@ export function getImageSource(id: PhotoId) {
 
 export const allTags: PhotoTag[] = ['Landscape', 'Cityscape', 'Street', 'Car'];
 
-// TODO: Replace with custom banner photo selection per tag
-// Banner photos for each tag (should be landscape-oriented images)
 export const tagBannerPhotos: Record<PhotoTag | 'all', PhotoId> = {
-  'all': 'dsc-4517',           // Ocean Panorama - default banner
-  'Landscape': 'blog-placeholder-1',  // Golden Hour Mountains
-  'Cityscape': 'blog-placeholder-about', // City Lights
-  'Street': 'blog-placeholder-2',     // Alpine Road
-  'Car': 'blog-placeholder-4',        // Desert Canyon
+  'all': 'dsc-4517',
+  'Landscape': 'blog-placeholder-1',
+  'Cityscape': 'blog-placeholder-about',
+  'Street': 'blog-placeholder-2',
+  'Car': 'blog-placeholder-4',
 };
 
 export function getBannerPhotoForTag(tag: PhotoTag | 'all'): PhotoId {
@@ -219,11 +133,9 @@ export function getBannerPhotoForTag(tag: PhotoTag | 'all'): PhotoId {
 }
 
 export function getBannerImageSource(tag: PhotoTag | 'all') {
-  const photoId = getBannerPhotoForTag(tag);
-  return imageSources[photoId];
+  return imageSources[getBannerPhotoForTag(tag)];
 }
 
-// Get photos sorted by date (descending order - newest to oldest)
 export function getPhotosSortedByDate(): PhotoMetadata[] {
   return [...photos].sort((a, b) => {
     const dateA = a.exif.dateTaken ? new Date(a.exif.dateTaken).getTime() : 0;
