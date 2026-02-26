@@ -141,55 +141,52 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
 </style>
 
 <script>
-  // Tag filtering and banner switching functionality
-  const filterButtons = document.querySelectorAll('.filter-btn');
-  const galleryItems = document.querySelectorAll('.gallery-item');
-  const bannerImages = document.querySelectorAll('.banner-image');
+  function initGallery() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const bannerImages = document.querySelectorAll('.banner-image');
 
-  function filterGallery(tag: string) {
-    galleryItems.forEach((item) => {
-      const itemTags = item.getAttribute('data-tags')?.split(',') || [];
-      if (tag === 'all' || itemTags.includes(tag)) {
-        item.classList.remove('hidden');
-      } else {
-        item.classList.add('hidden');
-      }
-    });
+    if (!filterButtons.length) return;
 
-    // Hide columns that have no visible items to avoid empty gaps
-    document.querySelectorAll('.masonry-col').forEach((col) => {
-      const hasVisible = col.querySelector('.gallery-item:not(.hidden)');
-      (col as HTMLElement).style.display = hasVisible ? '' : 'none';
+    function filterGallery(tag: string) {
+      galleryItems.forEach((item) => {
+        const itemTags = item.getAttribute('data-tags')?.split(',') || [];
+        if (tag === 'all' || itemTags.includes(tag)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      document.querySelectorAll('.masonry-col').forEach((col) => {
+        const hasVisible = col.querySelector('.gallery-item:not(.hidden)');
+        (col as HTMLElement).style.display = hasVisible ? '' : 'none';
+      });
+    }
+
+    function switchBanner(tag: string) {
+      bannerImages.forEach((banner) => {
+        const bannerTag = banner.getAttribute('data-banner-tag');
+        if (bannerTag === tag) {
+          banner.classList.remove('opacity-0');
+          banner.classList.add('opacity-100');
+        } else {
+          banner.classList.remove('opacity-100');
+          banner.classList.add('opacity-0');
+        }
+      });
+    }
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tag = btn.getAttribute('data-tag') || 'all';
+        filterGallery(tag);
+        switchBanner(tag);
+      });
     });
   }
 
-  function switchBanner(tag: string) {
-    bannerImages.forEach((banner) => {
-      const bannerTag = banner.getAttribute('data-banner-tag');
-      if (bannerTag === tag) {
-        banner.classList.remove('opacity-0');
-        banner.classList.add('opacity-100');
-      } else {
-        banner.classList.remove('opacity-100');
-        banner.classList.add('opacity-0');
-      }
-    });
-  }
-
-  filterButtons.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      // Update active state
-      filterButtons.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      // Get selected tag
-      const tag = btn.getAttribute('data-tag') || 'all';
-      
-      // Filter gallery
-      filterGallery(tag);
-      
-      // Switch banner image
-      switchBanner(tag);
-    });
-  });
+  document.addEventListener('astro:page-load', initGallery);
 </script>

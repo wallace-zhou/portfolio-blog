@@ -191,72 +191,49 @@ const photoData = photos.map((photo, index) => ({
     index: number;
   }
 
-  // Get photo data from the server-rendered script
-  const allPhotos: PhotoData[] = (window as any).__lightboxPhotos || [];
-  
-  // Current state
   let currentIndex = 0;
-  let filteredPhotos: PhotoData[] = [...allPhotos];
+  let filteredPhotos: PhotoData[] = [];
+  let allPhotos: PhotoData[] = [];
   let isOpen = false;
   let isInfoPanelOpen = false;
+  let documentListenersAttached = false;
 
-  // DOM elements
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImageContainer = document.getElementById('lightbox-image-container');
-  const lightboxTitle = document.getElementById('lightbox-title');
-  const lightboxLocation = document.getElementById('lightbox-location');
-  const lightboxCurrent = document.getElementById('lightbox-current');
-  const lightboxTotal = document.getElementById('lightbox-total');
-  const closeBtn = document.getElementById('lightbox-close');
-  const prevBtn = document.getElementById('lightbox-prev');
-  const nextBtn = document.getElementById('lightbox-next');
-  const infoToggleBtn = document.getElementById('lightbox-info-toggle');
-  const infoCloseBtn = document.getElementById('lightbox-info-close');
-  const infoPanel = document.getElementById('lightbox-info-panel');
-  
-  // Info panel elements
-  const infoPanelTitle = document.getElementById('info-panel-title');
-  const infoPanelLocation = document.getElementById('info-panel-location');
-  const exifCamera = document.getElementById('exif-camera');
-  const exifLens = document.getElementById('exif-lens');
-  const exifFocal = document.getElementById('exif-focal');
-  const exifAperture = document.getElementById('exif-aperture');
-  const exifShutter = document.getElementById('exif-shutter');
-  const exifIso = document.getElementById('exif-iso');
-  const exifDate = document.getElementById('exif-date');
+  function getLightboxEl(id: string) {
+    return document.getElementById(id);
+  }
 
   function updateLightbox() {
     if (!filteredPhotos.length) return;
-    
     const photo = filteredPhotos[currentIndex];
     if (!photo) return;
 
-    // Hide all image containers and show only the current one
-    const allImageContainers = lightboxImageContainer?.querySelectorAll('[data-photo-id]');
-    allImageContainers?.forEach((container) => {
-      if (container.getAttribute('data-photo-id') === photo.id) {
-        container.classList.remove('hidden');
+    const container = getLightboxEl('lightbox-image-container');
+    container?.querySelectorAll('[data-photo-id]').forEach((el) => {
+      if (el.getAttribute('data-photo-id') === photo.id) {
+        el.classList.remove('hidden');
       } else {
-        container.classList.add('hidden');
+        el.classList.add('hidden');
       }
     });
 
-    // Update caption
-    if (lightboxTitle) lightboxTitle.textContent = photo.title;
-    if (lightboxLocation) lightboxLocation.textContent = photo.location;
-    if (lightboxCurrent) lightboxCurrent.textContent = (currentIndex + 1).toString();
-    if (lightboxTotal) lightboxTotal.textContent = filteredPhotos.length.toString();
+    const setTextContent = (id: string, text: string) => {
+      const el = getLightboxEl(id);
+      if (el) el.textContent = text;
+    };
 
-    // Update info panel
-    if (infoPanelTitle) infoPanelTitle.textContent = photo.title;
-    if (infoPanelLocation) infoPanelLocation.textContent = photo.location;
-    if (exifCamera) exifCamera.textContent = photo.exif.camera || '—';
-    if (exifLens) exifLens.textContent = photo.exif.lens || '—';
-    if (exifFocal) exifFocal.textContent = photo.exif.focalLength || '—';
-    if (exifAperture) exifAperture.textContent = photo.exif.aperture || '—';
-    if (exifShutter) exifShutter.textContent = photo.exif.shutterSpeed || '—';
-    if (exifIso) exifIso.textContent = photo.exif.iso || '—';
-    if (exifDate) exifDate.textContent = photo.exif.dateTaken || '—';
+    setTextContent('lightbox-title', photo.title);
+    setTextContent('lightbox-location', photo.location);
+    setTextContent('lightbox-current', (currentIndex + 1).toString());
+    setTextContent('lightbox-total', filteredPhotos.length.toString());
+    setTextContent('info-panel-title', photo.title);
+    setTextContent('info-panel-location', photo.location);
+    setTextContent('exif-camera', photo.exif.camera || '—');
+    setTextContent('exif-lens', photo.exif.lens || '—');
+    setTextContent('exif-focal', photo.exif.focalLength || '—');
+    setTextContent('exif-aperture', photo.exif.aperture || '—');
+    setTextContent('exif-shutter', photo.exif.shutterSpeed || '—');
+    setTextContent('exif-iso', photo.exif.iso || '—');
+    setTextContent('exif-date', photo.exif.dateTaken || '—');
   }
 
   function toggleInfoPanel() {
@@ -272,49 +249,38 @@ const photoData = photos.map((photo, index) => ({
   }
 
   function updateInfoPanelState() {
+    const infoPanel = getLightboxEl('lightbox-info-panel');
+    const lightboxImageContainer = getLightboxEl('lightbox-image-container');
+    const nextBtn = getLightboxEl('lightbox-next');
+    const infoToggleBtn = getLightboxEl('lightbox-info-toggle');
+
     if (isInfoPanelOpen) {
-      // Show panel
       infoPanel?.classList.remove('translate-x-full');
-      // Shift image container to the left
-      if (lightboxImageContainer) {
-        lightboxImageContainer.style.right = '320px'; // 80 * 4 = 320px (w-80 = 20rem)
-      }
-      // Move next button to stay visible between panel and image
-      if (nextBtn) {
-        nextBtn.style.right = '336px'; // 320px (panel width) + 16px (original right-4)
-      }
-      // Add visual feedback to toggle button
+      if (lightboxImageContainer) lightboxImageContainer.style.right = '320px';
+      if (nextBtn) nextBtn.style.right = '336px';
       infoToggleBtn?.classList.add('bg-white/20', 'text-white');
       infoToggleBtn?.classList.remove('text-white/80');
     } else {
-      // Hide panel
       infoPanel?.classList.add('translate-x-full');
-      // Reset image container
-      if (lightboxImageContainer) {
-        lightboxImageContainer.style.right = '0';
-      }
-      // Reset next button position
-      if (nextBtn) {
-        nextBtn.style.right = '1rem'; // Back to right-4 (1rem = 16px)
-      }
-      // Remove visual feedback from toggle button
+      if (lightboxImageContainer) lightboxImageContainer.style.right = '0';
+      if (nextBtn) nextBtn.style.right = '1rem';
       infoToggleBtn?.classList.remove('bg-white/20', 'text-white');
       infoToggleBtn?.classList.add('text-white/80');
     }
   }
 
   function openLightbox(photoId: string, visiblePhotoIds?: string[]) {
-    // If visiblePhotoIds provided, filter to only those photos
+    allPhotos = (window as any).__lightboxPhotos || [];
     if (visiblePhotoIds && visiblePhotoIds.length > 0) {
       filteredPhotos = allPhotos.filter(p => visiblePhotoIds.includes(p.id));
     } else {
       filteredPhotos = [...allPhotos];
     }
 
-    // Find the index of the clicked photo in the filtered list
     currentIndex = filteredPhotos.findIndex(p => p.id === photoId);
     if (currentIndex === -1) currentIndex = 0;
 
+    const lightbox = getLightboxEl('lightbox');
     if (lightbox) {
       lightbox.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
@@ -324,19 +290,17 @@ const photoData = photos.map((photo, index) => ({
   }
 
   function closeLightbox() {
+    const lightbox = getLightboxEl('lightbox');
     if (lightbox) {
       lightbox.classList.add('hidden');
       document.body.style.overflow = '';
       isOpen = false;
-      
-      // Close info panel if open
       closeInfoPanel();
     }
   }
 
   function navigate(direction: 'prev' | 'next') {
     if (!filteredPhotos.length) return;
-    
     if (direction === 'prev') {
       currentIndex = currentIndex > 0 ? currentIndex - 1 : filteredPhotos.length - 1;
     } else {
@@ -345,80 +309,73 @@ const photoData = photos.map((photo, index) => ({
     updateLightbox();
   }
 
-  // Event listeners
-  closeBtn?.addEventListener('click', closeLightbox);
-  infoToggleBtn?.addEventListener('click', toggleInfoPanel);
-  infoCloseBtn?.addEventListener('click', closeInfoPanel);
-  prevBtn?.addEventListener('click', () => navigate('prev'));
-  nextBtn?.addEventListener('click', () => navigate('next'));
+  function attachDocumentListeners() {
+    if (documentListenersAttached) return;
+    documentListenersAttached = true;
 
-  // Close info panel when clicking outside of it (on the backdrop or image)
-  lightbox?.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    
-    // Close entire lightbox if clicking on backdrop or image container (empty space)
-    if (target === lightbox || 
-        target.id === 'lightbox' || 
-        target.id === 'lightbox-image-container' ||
-        target === lightboxImageContainer) {
-      closeLightbox();
-      return;
-    }
-    
-    // Close info panel if it's open and click is outside the panel
-    // Don't close when clicking navigation buttons
-    if (isInfoPanelOpen && 
-        !infoPanel?.contains(target) && 
-        !infoToggleBtn?.contains(target) &&
-        !nextBtn?.contains(target) &&
-        !prevBtn?.contains(target)) {
-      closeInfoPanel();
-    }
-  });
-
-  // Keyboard navigation
-  document.addEventListener('keydown', (e) => {
-    if (!isOpen) return;
-    
-    switch (e.key) {
-      case 'Escape':
-        // Close info panel first if open, otherwise close lightbox
-        if (isInfoPanelOpen) {
-          closeInfoPanel();
-        } else {
-          closeLightbox();
-        }
-        break;
-      case 'ArrowLeft':
-        navigate('prev');
-        break;
-      case 'ArrowRight':
-        navigate('next');
-        break;
-      case 'i':
-      case 'I':
-        // Toggle info panel with 'i' key
-        toggleInfoPanel();
-        break;
-    }
-  });
-
-  // Listen for gallery image clicks
-  document.addEventListener('click', (e) => {
-    const wrapper = (e.target as HTMLElement).closest('.gallery-image-wrapper');
-    if (wrapper) {
-      const photoId = wrapper.getAttribute('data-photo-id');
-      if (photoId) {
-        // Get currently visible photo IDs (for filtered navigation)
-        // Check if parent .gallery-item has .hidden class
-        const visibleItems = document.querySelectorAll('.gallery-item:not(.hidden) .gallery-image-wrapper');
-        const visibleIds = Array.from(visibleItems).map(el => el.getAttribute('data-photo-id')).filter(Boolean) as string[];
-        openLightbox(photoId, visibleIds);
+    document.addEventListener('keydown', (e) => {
+      if (!isOpen) return;
+      switch (e.key) {
+        case 'Escape':
+          if (isInfoPanelOpen) { closeInfoPanel(); } else { closeLightbox(); }
+          break;
+        case 'ArrowLeft': navigate('prev'); break;
+        case 'ArrowRight': navigate('next'); break;
+        case 'i':
+        case 'I': toggleInfoPanel(); break;
       }
-    }
+    });
+
+    document.addEventListener('click', (e) => {
+      const wrapper = (e.target as HTMLElement).closest('.gallery-image-wrapper');
+      if (wrapper) {
+        const photoId = wrapper.getAttribute('data-photo-id');
+        if (photoId) {
+          const visibleItems = document.querySelectorAll('.gallery-item:not(.hidden) .gallery-image-wrapper');
+          const visibleIds = Array.from(visibleItems).map(el => el.getAttribute('data-photo-id')).filter(Boolean) as string[];
+          openLightbox(photoId, visibleIds);
+        }
+      }
+    });
+  }
+
+  function initLightboxElements() {
+    const lightbox = getLightboxEl('lightbox');
+    if (!lightbox) return;
+
+    getLightboxEl('lightbox-close')?.addEventListener('click', closeLightbox);
+    getLightboxEl('lightbox-info-toggle')?.addEventListener('click', toggleInfoPanel);
+    getLightboxEl('lightbox-info-close')?.addEventListener('click', closeInfoPanel);
+    getLightboxEl('lightbox-prev')?.addEventListener('click', () => navigate('prev'));
+    getLightboxEl('lightbox-next')?.addEventListener('click', () => navigate('next'));
+
+    lightbox.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      const container = getLightboxEl('lightbox-image-container');
+      if (target === lightbox || target.id === 'lightbox' ||
+          target.id === 'lightbox-image-container' || target === container) {
+        closeLightbox();
+        return;
+      }
+      if (isInfoPanelOpen &&
+          !getLightboxEl('lightbox-info-panel')?.contains(target) &&
+          !getLightboxEl('lightbox-info-toggle')?.contains(target) &&
+          !getLightboxEl('lightbox-next')?.contains(target) &&
+          !getLightboxEl('lightbox-prev')?.contains(target)) {
+        closeInfoPanel();
+      }
+    });
+
+    (window as any).openLightbox = openLightbox;
+    (window as any).closeLightbox = closeLightbox;
+  }
+
+  document.addEventListener('astro:before-swap', () => {
+    if (isOpen) closeLightbox();
   });
 
-  // Expose functions globally for external control
-  (window as any).openLightbox = openLightbox;
-  (window as any).closeLightbox = closeLightbox;
+  document.addEventListener('astro:page-load', () => {
+    attachDocumentListeners();
+    initLightboxElements();
+  });
 </script>
