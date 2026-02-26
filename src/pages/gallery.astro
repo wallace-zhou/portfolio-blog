@@ -22,7 +22,7 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
     <!-- Gallery Banner Header -->
     <div class="banner-header relative w-full h-[300px] md:h-[400px] overflow-hidden pr-2 md:pr-4">
       <!-- Banner Images Container -->
-      <div class="banner-images absolute inset-0 right-2 md:right-4">
+      <div class="banner-images absolute inset-y-0 left-0 right-2 md:left-28 md:right-4">
         {Object.entries(bannerImages).map(([tag, imgSrc]) => (
           <div 
             class={`banner-image absolute inset-0 transition-opacity duration-500 ${tag === 'all' ? 'opacity-100' : 'opacity-0'}`}
@@ -41,16 +41,16 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
       </div>
       
       <!-- Dark Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
+      <div class="absolute inset-y-0 left-0 right-0 md:left-28 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
       
       <!-- Banner Content -->
-      <div class="banner-content absolute inset-0 flex flex-col items-center justify-center px-4">
+      <div class="banner-content absolute inset-y-0 left-0 right-0 md:left-28 flex flex-col items-center justify-center px-4">
         <h1 class="text-display md:text-hero style-heading text-white drop-shadow-lg">Gallery</h1>
       </div>
     </div>
 
     <!-- Tag Filter Buttons -->
-    <div class="flex flex-wrap justify-center gap-3 px-4 py-6 md:py-8">
+    <div class="flex flex-wrap justify-center gap-3 px-4 py-6 md:py-8 md:pl-28 md:pr-4">
       <button 
         class="filter-btn active px-4 py-2 text-small style-nav border border-background/30 text-background/90 hover:bg-background/10 transition-colors rounded-sm"
         data-tag="all"
