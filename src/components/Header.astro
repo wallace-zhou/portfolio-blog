@@ -14,7 +14,7 @@
   }
 </style>
 
-<header id="site-header" class="w-full bg-primary">
+<header id="site-header" class="w-full bg-primary relative z-[var(--z-header)]">
   <div id="hero-top-logo" class="flex justify-between items-center py-4 md:py-[26px] pl-16 pr-6 md:pl-28 md:pr-4">
     <a
       href="/"
@@ -41,15 +41,10 @@
   function updateHeaderHeight() {
     const header = document.getElementById('site-header');
     if (header) {
-      const height = header.offsetHeight;
-      document.documentElement.style.setProperty('--header-height', `${height}px`);
+      document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
     }
   }
 
-  // Update on load and resize
-  window.addEventListener('load', updateHeaderHeight);
   window.addEventListener('resize', updateHeaderHeight);
-  
-  // Initial call
-  updateHeaderHeight();
+  document.addEventListener('astro:page-load', updateHeaderHeight);
 </script>

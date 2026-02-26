@@ -1,0 +1,192 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GalleryImage from '../components/GalleryImage.astro';
+import Lightbox from '../components/Lightbox.astro';
+import Footer from '../components/Footer.astro';
+import { Masonry } from 'astro-masonry';
+import { Image } from 'astro:assets';
+import { getPhotosSortedByDate, allTags, tagBannerPhotos, imageSources, type PhotoTag, type PhotoId } from '../data/photos';
+
+// Get photos sorted by date taken (chronological order)
+const photos = getPhotosSortedByDate();
+
+// Pre-generate all banner images for client-side switching
+const bannerImages: Record<string, ImageMetadata> = {};
+for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
+  bannerImages[tag] = imageSources[photoId as PhotoId];
+}
+---
+
+<BaseLayout title="Gallery" description="Photography gallery showcasing landscape, cityscape, street, and automotive photography">
+  <main class="min-h-screen bg-primary">
+    <!-- Gallery Banner Header -->
+    <div class="banner-header relative w-full h-[300px] md:h-[400px] overflow-hidden pr-2 md:pr-4">
+      <!-- Banner Images Container -->
+      <div class="banner-images absolute inset-y-0 left-0 right-2 md:left-28 md:right-4">
+        {Object.entries(bannerImages).map(([tag, imgSrc]) => (
+          <div 
+            class={`banner-image absolute inset-0 transition-opacity duration-500 ${tag === 'all' ? 'opacity-100' : 'opacity-0'}`}
+            data-banner-tag={tag}
+          >
+            <Image 
+              src={imgSrc}
+              alt={`${tag} photography banner`}
+              class="w-full h-full object-cover"
+              widths={[800, 1200, 1920]}
+              sizes="100vw"
+              loading="eager"
+            />
+          </div>
+        ))}
+      </div>
+      
+      <!-- Dark Overlay -->
+      <div class="absolute inset-y-0 left-0 right-0 md:left-28 bg-gradient-to-b from-black/50 via-black/40 to-black/60"></div>
+      
+      <!-- Banner Content -->
+      <div class="banner-content absolute inset-y-0 left-0 right-0 md:left-28 flex flex-col items-center justify-center px-4">
+        <h1 class="text-display md:text-hero style-heading text-white drop-shadow-lg">Gallery</h1>
+      </div>
+    </div>
+
+    <!-- Tag Filter Buttons -->
+    <div class="flex flex-wrap justify-center gap-3 px-4 py-6 md:py-8 md:pl-28 md:pr-4">
+      <button 
+        class="filter-btn active px-4 py-2 text-small style-nav border border-background/30 text-background/90 hover:bg-background/10 transition-colors rounded-sm"
+        data-tag="all"
+      >
+        All
+      </button>
+      {allTags.map((tag) => (
+        <button 
+          class="filter-btn px-4 py-2 text-small style-nav border border-background/30 text-background/70 hover:bg-background/10 transition-colors rounded-sm"
+          data-tag={tag}
+        >
+          {tag}
+        </button>
+      ))}
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-container px-2 md:pl-28 md:pr-4 pb-16">
+      <Masonry
+        breakpointCols={{ default: 5, 2000: 4, 1600: 3, 1200: 2, 800: 1 }}
+        class="flex gap-4"
+        columnClass="masonry-col flex flex-col gap-4"
+      >
+        {photos.map((photo, index) => (
+          <div 
+            class="gallery-item"
+            data-tags={photo.tags.join(',')}
+          >
+            <GalleryImage 
+              photo={photo} 
+              index={index}
+              loading={index < 10 ? 'eager' : 'lazy'}
+              sizes="(max-width: 800px) 100vw, (max-width: 1200px) 50vw, (max-width: 1600px) 33vw, (max-width: 2000px) 25vw, 20vw"
+            />
+          </div>
+        ))}
+      </Masonry>
+    </div>
+
+    <Footer />
+  </main>
+
+  <Lightbox photos={photos} />
+</BaseLayout>
+
+<style>
+  /* Banner styles */
+  .banner-header {
+    /* Ensure banner starts from top of viewport on mobile */
+    margin-top: -6rem; /* Offset for mobile header */
+  }
+
+  @media (min-width: 768px) {
+    .banner-header {
+      margin-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  .banner-content {
+    padding-top: 6rem;
+  }
+
+  @media (min-width: 768px) {
+    .banner-content {
+      padding-top: 0;
+    }
+  }
+
+  .banner-image {
+    pointer-events: none;
+  }
+
+  .gallery-item {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .gallery-item.hidden {
+    display: none;
+  }
+
+  /* Filter button active state */
+  .filter-btn.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: var(--background);
+    border-color: var(--background);
+  }
+</style>
+
+<script>
+  function initGallery() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const bannerImages = document.querySelectorAll('.banner-image');
+
+    if (!filterButtons.length) return;
+
+    function filterGallery(tag: string) {
+      galleryItems.forEach((item) => {
+        const itemTags = item.getAttribute('data-tags')?.split(',') || [];
+        if (tag === 'all' || itemTags.includes(tag)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+
+      document.querySelectorAll('.masonry-col').forEach((col) => {
+        const hasVisible = col.querySelector('.gallery-item:not(.hidden)');
+        (col as HTMLElement).style.display = hasVisible ? '' : 'none';
+      });
+    }
+
+    function switchBanner(tag: string) {
+      bannerImages.forEach((banner) => {
+        const bannerTag = banner.getAttribute('data-banner-tag');
+        if (bannerTag === tag) {
+          banner.classList.remove('opacity-0');
+          banner.classList.add('opacity-100');
+        } else {
+          banner.classList.remove('opacity-100');
+          banner.classList.add('opacity-0');
+        }
+      });
+    }
+
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tag = btn.getAttribute('data-tag') || 'all';
+        filterGallery(tag);
+        switchBanner(tag);
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', initGallery);
+</script>

@@ -1,6 +1,6 @@
 ---
 const navLinks = [
-  { label: "Work", href: "#work" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Journal", href: "/blog" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "#contact" },
@@ -16,7 +16,8 @@ const navLinks = [
 <!-- Desktop Sidebar -->
 <nav 
   id="desktop-nav"
-  class="fixed left-0 top-0 h-screen w-28 z-50 hidden md:flex flex-col items-center py-8 bg-primary"
+  transition:persist="desktop-nav"
+  class="fixed left-0 top-0 h-screen w-28 z-[var(--z-sidebar)] hidden md:flex flex-col items-center py-8 bg-primary"
 >
   <!-- Logo - only visible after scrolling past hero -->
   <a 
@@ -45,12 +46,12 @@ const navLinks = [
 </nav>
 
 <!-- Mobile Header -->
-<header id="mobile-header" class="fixed top-0 left-0 right-0 z-50 md:hidden">
-  <div id="mobile-header-bg" class="relative z-10 flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
+<header id="mobile-header" transition:persist="mobile-header" class="fixed top-0 left-0 right-0 z-[var(--z-mobile-header)] md:hidden pointer-events-none">
+  <div id="mobile-header-bg" class="relative flex items-center justify-between px-6 py-4 transition-colors duration-500 bg-transparent">
     <!-- Menu Toggle - on the left -->
     <button 
       id="menu-toggle"
-      class="text-background p-2"
+      class="text-background p-2 relative z-10 pointer-events-auto"
       aria-label="Toggle menu"
       aria-expanded="false"
     >
@@ -63,9 +64,9 @@ const navLinks = [
 
     <!-- Logo - only visible after scrolling past hero -->
     <a 
-      href="#"
+      href="/"
       id="mobile-logo"
-      class="transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none"
+      class="transition-all duration-500 opacity-0 -translate-y-2 pointer-events-none relative z-10"
     >
       <img
         src="/logo-z.svg"
@@ -78,11 +79,11 @@ const navLinks = [
   <!-- Mobile Menu Backdrop -->
   <div 
     id="mobile-menu-backdrop" 
-    class="fixed inset-0 z-0 bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
+    class="fixed inset-0 z-[var(--z-mobile-backdrop)] bg-black/50 transition-opacity duration-500 opacity-0 pointer-events-none"
   ></div>
 
   <!-- Mobile Menu Sidebar -->
-  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[5] bg-primary transition-transform duration-500 -translate-x-full">
+  <div id="mobile-menu" class="fixed left-0 top-0 bottom-0 w-[70%] z-[var(--z-mobile-menu)] bg-primary transition-transform duration-500 -translate-x-full pointer-events-none">
     <div class="flex flex-col items-center justify-center h-full gap-12">
       {navLinks.map((link) => (
         <a
@@ -97,106 +98,63 @@ const navLinks = [
 </header>
 
 <script>
-  // Scroll detection for nav background and logo visibility
-  const desktopNav = document.getElementById('desktop-nav');
-  const navLogo = document.getElementById('nav-logo');
-  const mobileHeaderBg = document.getElementById('mobile-header-bg');
-  const mobileLogo = document.getElementById('mobile-logo');
-  const menuToggle = document.getElementById('menu-toggle');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
-  const menuLine1 = document.getElementById('menu-line-1');
-  const menuLine2 = document.getElementById('menu-line-2');
-  const menuLine3 = document.getElementById('menu-line-3');
-  const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-  const heroTopLogo = document.getElementById('hero-top-logo');
-
   let isMobileMenuOpen = false;
-  let isHeroLogoVisible = true;
+  let mobileMenuInitialized = false;
+  let currentObserver: IntersectionObserver | null = null;
+  let currentScrollHandler: ((e: Event) => void) | null = null;
 
-  // Use Intersection Observer to detect when hero logo is out of view (only on home page)
-  if (heroTopLogo) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          isHeroLogoVisible = entry.isIntersecting;
-          updateNavLogoVisibility();
-        });
-      },
-      {
-        threshold: 0,
-        rootMargin: '0px'
-      }
-    );
-    observer.observe(heroTopLogo);
-  } else {
-    // On pages without hero logo, always show nav logo
-    isHeroLogoVisible = false;
-    updateNavLogoVisibility();
-  }
+  function closeMobileMenu() {
+    if (!isMobileMenuOpen) return;
+    isMobileMenuOpen = false;
 
-  function updateNavLogoVisibility() {
-    const showNavLogo = !isHeroLogoVisible;
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+    const menuLine1 = document.getElementById('menu-line-1');
+    const menuLine2 = document.getElementById('menu-line-2');
+    const menuLine3 = document.getElementById('menu-line-3');
 
-    // Desktop logo visibility - only show when hero logo is not visible
-    if (navLogo) {
-      if (showNavLogo) {
-        navLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
-        navLogo.classList.add('opacity-100', 'translate-y-0');
-      } else {
-        navLogo.classList.remove('opacity-100', 'translate-y-0');
-        navLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
-      }
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', 'false');
+
+    if (mobileMenu) {
+      mobileMenu.classList.remove('translate-x-0', 'pointer-events-auto');
+      mobileMenu.classList.add('-translate-x-full', 'pointer-events-none');
     }
 
-    // Mobile logo visibility - only show when hero logo is not visible
-    if (mobileLogo) {
-      if (showNavLogo) {
-        mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
-        mobileLogo.classList.add('opacity-100', 'translate-y-0');
-      } else {
-        mobileLogo.classList.remove('opacity-100', 'translate-y-0');
-        mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
-      }
+    if (mobileMenuBackdrop) {
+      mobileMenuBackdrop.classList.remove('opacity-100', 'pointer-events-auto');
+      mobileMenuBackdrop.classList.add('opacity-0', 'pointer-events-none');
     }
-  }
 
-  function handleScroll() {
-    const scrollY = window.scrollY;
-    const isScrolled = scrollY > 100;
-    const hasScrolled = scrollY > 0;
-
-    // Mobile header background
-    if (mobileHeaderBg) {
-      if (isScrolled) {
-        mobileHeaderBg.classList.remove('bg-transparent');
-        mobileHeaderBg.classList.add('bg-primary');
-      } else {
-        mobileHeaderBg.classList.remove('bg-primary');
-        mobileHeaderBg.classList.add('bg-transparent');
-      }
+    if (menuLine1 && menuLine2 && menuLine3) {
+      menuLine1.classList.remove('rotate-45', 'translate-y-2');
+      menuLine2.classList.remove('opacity-0');
+      menuLine3.classList.remove('-rotate-45', '-translate-y-2');
     }
   }
 
   function toggleMobileMenu() {
     isMobileMenuOpen = !isMobileMenuOpen;
-    
-    if (menuToggle) {
-      menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
-    }
 
-    // Toggle sidebar (slides from left)
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+    const menuLine1 = document.getElementById('menu-line-1');
+    const menuLine2 = document.getElementById('menu-line-2');
+    const menuLine3 = document.getElementById('menu-line-3');
+
+    if (menuToggle) menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
+
     if (mobileMenu) {
       if (isMobileMenuOpen) {
-        mobileMenu.classList.remove('-translate-x-full');
-        mobileMenu.classList.add('translate-x-0');
+        mobileMenu.classList.remove('-translate-x-full', 'pointer-events-none');
+        mobileMenu.classList.add('translate-x-0', 'pointer-events-auto');
       } else {
-        mobileMenu.classList.remove('translate-x-0');
-        mobileMenu.classList.add('-translate-x-full');
+        mobileMenu.classList.remove('translate-x-0', 'pointer-events-auto');
+        mobileMenu.classList.add('-translate-x-full', 'pointer-events-none');
       }
     }
 
-    // Toggle backdrop overlay
     if (mobileMenuBackdrop) {
       if (isMobileMenuOpen) {
         mobileMenuBackdrop.classList.remove('opacity-0', 'pointer-events-none');
@@ -207,7 +165,6 @@ const navLinks = [
       }
     }
 
-    // Animate menu icon
     if (menuLine1 && menuLine2 && menuLine3) {
       if (isMobileMenuOpen) {
         menuLine1.classList.add('rotate-45', 'translate-y-2');
@@ -221,29 +178,108 @@ const navLinks = [
     }
   }
 
-  function closeMobileMenu() {
-    if (isMobileMenuOpen) {
-      toggleMobileMenu();
+  function setupMobileMenuListeners() {
+    if (mobileMenuInitialized) return;
+    mobileMenuInitialized = true;
+
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+
+    if (menuToggle) menuToggle.addEventListener('click', toggleMobileMenu);
+    if (mobileMenuBackdrop) mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
+
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+      link.addEventListener('click', closeMobileMenu);
+    });
+  }
+
+  function setupPageBehavior() {
+    if (currentObserver) {
+      currentObserver.disconnect();
+      currentObserver = null;
     }
+    if (currentScrollHandler) {
+      window.removeEventListener('scroll', currentScrollHandler);
+      currentScrollHandler = null;
+    }
+
+    const navLogo = document.getElementById('nav-logo');
+    const mobileHeaderBg = document.getElementById('mobile-header-bg');
+    const mobileLogo = document.getElementById('mobile-logo');
+    const heroTopLogo = document.getElementById('hero-top-logo');
+
+    let isHeroLogoVisible = true;
+
+    function updateNavLogoVisibility() {
+      const showNavLogo = !isHeroLogoVisible;
+
+      if (navLogo) {
+        if (showNavLogo) {
+          navLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+          navLogo.classList.add('opacity-100', 'translate-y-0');
+        } else {
+          navLogo.classList.remove('opacity-100', 'translate-y-0');
+          navLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+        }
+      }
+
+      if (mobileLogo) {
+        if (showNavLogo) {
+          mobileLogo.classList.remove('opacity-0', '-translate-y-2', 'pointer-events-none');
+          mobileLogo.classList.add('opacity-100', 'translate-y-0', 'pointer-events-auto');
+        } else {
+          mobileLogo.classList.remove('opacity-100', 'translate-y-0', 'pointer-events-auto');
+          mobileLogo.classList.add('opacity-0', '-translate-y-2', 'pointer-events-none');
+        }
+      }
+    }
+
+    function handleScroll() {
+      const scrollY = window.scrollY;
+      const isScrolled = scrollY > 100;
+
+      if (mobileHeaderBg && heroTopLogo) {
+        if (isScrolled) {
+          mobileHeaderBg.classList.remove('bg-transparent');
+          mobileHeaderBg.classList.add('bg-primary');
+        } else {
+          mobileHeaderBg.classList.remove('bg-primary');
+          mobileHeaderBg.classList.add('bg-transparent');
+        }
+      }
+    }
+
+    if (heroTopLogo) {
+      currentObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            isHeroLogoVisible = entry.isIntersecting;
+            updateNavLogoVisibility();
+          });
+        },
+        { threshold: 0, rootMargin: '0px' }
+      );
+      currentObserver.observe(heroTopLogo);
+    } else {
+      isHeroLogoVisible = false;
+      updateNavLogoVisibility();
+      if (mobileHeaderBg) {
+        mobileHeaderBg.classList.remove('bg-transparent');
+        mobileHeaderBg.classList.add('bg-primary');
+      }
+    }
+
+    currentScrollHandler = handleScroll;
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    handleScroll();
+    updateNavLogoVisibility();
   }
 
-  // Event listeners
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  
-  if (menuToggle) {
-    menuToggle.addEventListener('click', toggleMobileMenu);
-  }
+  document.addEventListener('astro:before-swap', closeMobileMenu);
 
-  // Close menu when clicking backdrop
-  if (mobileMenuBackdrop) {
-    mobileMenuBackdrop.addEventListener('click', closeMobileMenu);
-  }
-
-  mobileNavLinks.forEach(link => {
-    link.addEventListener('click', closeMobileMenu);
+  document.addEventListener('astro:page-load', () => {
+    setupMobileMenuListeners();
+    setupPageBehavior();
   });
-
-  // Initial state
-  handleScroll();
-  updateNavLogoVisibility();
 </script>
