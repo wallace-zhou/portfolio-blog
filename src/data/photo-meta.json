@@ -1,50 +1,51 @@
 {
-  "blog-placeholder-1.jpg": {
-    "title": "Golden Hour Mountains",
-    "location": "Colorado, USA",
+  "2025_Chicago/DSC_4517.jpg": {
+    "title": "",
+    "location": "Chicago, Illinois",
+    "tags": ["Cityscape"],
+    "isHero": true,
+    "order": 1
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8535.jpg": {
+    "title": "",
+    "location": "Hawaii",
     "tags": ["Landscape"],
-    "isHero": true
+    "isHero": true,
+    "order": 2
   },
-  "blog-placeholder-2.jpg": {
-    "title": "Alpine Road",
-    "location": "Eastern Sierra, California",
-    "tags": ["Landscape", "Street"],
-    "isHero": true
-  },
-  "blog-placeholder-3.jpg": {
-    "title": "Misty Forest",
-    "location": "Pacific Northwest",
+  "2025-12-20_Hawaii-Trip/DSC_9035.jpg": {
+    "title": "",
+    "location": "Hawaii",
     "tags": ["Landscape"],
-    "isHero": true
+    "isHero": true,
+    "order": 3
   },
-  "blog-placeholder-4.jpg": {
-    "title": "Desert Canyon",
-    "location": "Utah, USA",
+  "2025-12-20_Hawaii-Trip/DSC_9068.jpg": {
+    "title": "",
+    "location": "Hawaii",
     "tags": ["Landscape"],
-    "isHero": true
+    "isHero": true,
+    "order": 4
   },
-  "blog-placeholder-6.jpg": {
-    "title": "Sunset Valley",
-    "location": "Arizona, USA",
+  "2025-12-20_Hawaii-Trip/DSC_9214.jpg": {
+    "title": "",
+    "location": "Hawaii",
     "tags": ["Landscape"],
-    "isHero": true
+    "isHero": true,
+    "order": 5
   },
-  "blog-placeholder-about.jpg": {
-    "title": "City Lights",
-    "location": "New York, USA",
-    "tags": ["Cityscape", "Street"],
-    "isHero": true
-  },
-  "DSC_4517.jpg": {
-    "title": "Ocean Panorama",
-    "location": "Big Sur, California",
+  "2025-12-20_Hawaii-Trip/DSC_8758.jpg": {
+    "title": "",
+    "location": "Hawaii",
     "tags": ["Landscape"],
-    "isHero": true
+    "isHero": true,
+    "order": 6
   },
-  "DSC_9074.jpg": {
-    "title": "Urban Exploration",
-    "location": "San Francisco, USA",
-    "tags": ["Street", "Cityscape"],
-    "isHero": true
+  "2025-12-20_Hawaii-Trip/DSC_8577.jpg": {
+    "title": "",
+    "location": "Hawaii",
+    "tags": ["Landscape"],
+    "isHero": true,
+    "order": 7
   }
 }

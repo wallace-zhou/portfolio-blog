@@ -3,19 +3,21 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "npm run extract-exif && astro dev",
-    "build": "npm run extract-exif && astro build",
+    "dev": "astro dev",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "extract-exif": "node scripts/extract-exif.js"
+    "sync-photos": "node scripts/sync-r2.js"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.13",
     "@astrojs/rss": "^4.0.15",
     "@astrojs/sitemap": "^3.7.0",
+    "@aws-sdk/client-s3": "^3.1006.0",
     "@tailwindcss/vite": "^4.1.18",
     "astro": "^5.16.11",
     "astro-masonry": "^1.2.2",
+    "dotenv": "^17.3.1",
     "exif-parser": "^0.1.12",
     "sharp": "^0.34.3",
     "tailwindcss": "^4.1.18"

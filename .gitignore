@@ -20,8 +20,7 @@ pnpm-debug.log*
 # macOS-specific files
 .DS_Store
 
-# generated build artifacts
-src/data/exif-cache.json
+# generated build artifacts (exif-cache.json replaced by photo-registry.json which is committed)
 
 # jetbrains setting folder
 .idea/

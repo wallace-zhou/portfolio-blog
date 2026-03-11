@@ -2,34 +2,29 @@
 import { Image } from 'astro:assets';
 import GalleryImage from './GalleryImage.astro';
 import Lightbox from './Lightbox.astro';
-import { getHeroPhotos, imageSources, type PhotoId } from '../data/photos';
+import { getHeroPhotos } from '../data/photos';
 
-// Get hero photos from the centralized data
 const heroPhotos = getHeroPhotos();
 
-// Create gallery images with source references
-const galleryImages = heroPhotos.map((photo) => ({
-  ...photo,
-  src: imageSources[photo.id as PhotoId],
-}));
-
-// Aspect ratio detection
 type AspectType = 'portrait' | 'landscape' | 'wide';
 
 function getAspectType(width: number, height: number): AspectType {
   const ratio = width / height;
-  if (ratio < 1) return 'portrait';       // 4:6 = 0.667
-  if (ratio < 1.75) return 'landscape';   // 6:4 = 1.5
-  return 'wide';                          // 2:1 = 2.0
+  if (ratio < 1) return 'portrait';
+  if (ratio < 1.75) return 'landscape';
+  return 'wide';
 }
 
-// Categorize images by aspect ratio
-const categorizedImages = galleryImages.map((img, index) => ({
-  ...img,
-  index,
-  ratio: img.src.width / img.src.height,
-  type: getAspectType(img.src.width, img.src.height)
-}));
+const categorizedImages = heroPhotos.map((photo, index) => {
+  const w = photo.exif.width || 4000;
+  const h = photo.exif.height || 3000;
+  return {
+    ...photo,
+    index,
+    ratio: w / h,
+    type: getAspectType(w, h),
+  };
+});
 
 // Group images by aspect type into rows with proper column counts
 type ImageWithType = typeof categorizedImages[number];

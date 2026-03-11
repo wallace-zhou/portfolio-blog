@@ -1,6 +1,7 @@
 ---
-import type { PhotoMetadata, PhotoId } from '../data/photos';
+import type { PhotoMetadata } from '../data/photos';
 import { imageSources } from '../data/photos';
+import { getImageUrl } from '../lib/images';
 import { Image } from 'astro:assets';
 
 interface Props {
@@ -9,7 +10,6 @@ interface Props {
 
 const { photos } = Astro.props;
 
-// Pre-compute optimized image URLs for the lightbox
 const photoData = photos.map((photo, index) => ({
   id: photo.id,
   title: photo.title,
@@ -78,23 +78,28 @@ const photoData = photos.map((photo, index) => ({
   <!-- Main image container -->
   <div id="lightbox-image-container" class="absolute inset-0 flex items-center justify-center p-16 pb-24 md:p-20 md:pb-28 transition-all duration-300">
     <!-- Pre-rendered Astro Image components for each photo -->
-    {photos.map((photo) => (
-      <div 
-        id={`lightbox-image-${photo.id}`}
-        class="hidden w-full h-full flex items-center justify-center"
-        data-photo-id={photo.id}
-      >
-        <Image
-          src={imageSources[photo.id as PhotoId]}
-          alt={photo.title}
-          class="max-w-full max-h-full object-contain transition-opacity duration-300"
-          quality="high"
-          widths={[800, 1200, 1600, 2000]}
-          sizes="(max-width: 768px) 90vw, (max-width: 1024px) 80vw, 70vw"
-          loading="lazy"
-        />
-      </div>
-    ))}
+    {photos.map((photo) => {
+      const r2Path = imageSources[photo.id];
+      const imageUrl = r2Path ? getImageUrl(r2Path) : '';
+      return imageUrl ? (
+        <div 
+          id={`lightbox-image-${photo.id}`}
+          class="hidden w-full h-full flex items-center justify-center"
+          data-photo-id={photo.id}
+        >
+          <Image
+            src={imageUrl}
+            alt={photo.title}
+            class="max-w-full max-h-full object-contain transition-opacity duration-300"
+            quality="high"
+            widths={[800, 1200, 1600, 2000]}
+            sizes="(max-width: 768px) 90vw, (max-width: 1024px) 80vw, 70vw"
+            loading="lazy"
+            inferSize
+          />
+        </div>
+      ) : null;
+    })}
   </div>
 
   <!-- Title and location overlay (bottom left) -->

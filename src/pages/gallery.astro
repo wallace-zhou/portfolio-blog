@@ -5,15 +5,14 @@ import Lightbox from '../components/Lightbox.astro';
 import Footer from '../components/Footer.astro';
 import { Masonry } from 'astro-masonry';
 import { Image } from 'astro:assets';
-import { getPhotosSortedByDate, allTags, tagBannerPhotos, imageSources, type PhotoTag, type PhotoId } from '../data/photos';
+import { getPhotosSortedByDate, allTags, getBannerImageUrl, type PhotoTag } from '../data/photos';
+import { getImageUrl } from '../lib/images';
 
-// Get photos sorted by date taken (chronological order)
 const photos = getPhotosSortedByDate();
 
-// Pre-generate all banner images for client-side switching
-const bannerImages: Record<string, ImageMetadata> = {};
-for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
-  bannerImages[tag] = imageSources[photoId as PhotoId];
+const bannerImages: Record<string, string> = {};
+for (const tag of ['all', ...allTags] as (PhotoTag | 'all')[]) {
+  bannerImages[tag] = getBannerImageUrl(tag);
 }
 ---
 
@@ -23,18 +22,19 @@ for (const [tag, photoId] of Object.entries(tagBannerPhotos)) {
     <div class="banner-header relative w-full h-[300px] md:h-[400px] overflow-hidden pr-2 md:pr-4">
       <!-- Banner Images Container -->
       <div class="banner-images absolute inset-y-0 left-0 right-2 md:left-28 md:right-4">
-        {Object.entries(bannerImages).map(([tag, imgSrc]) => (
+        {Object.entries(bannerImages).map(([tag, imgUrl]) => (
           <div 
             class={`banner-image absolute inset-0 transition-opacity duration-500 ${tag === 'all' ? 'opacity-100' : 'opacity-0'}`}
             data-banner-tag={tag}
           >
             <Image 
-              src={imgSrc}
+              src={imgUrl}
               alt={`${tag} photography banner`}
               class="w-full h-full object-cover"
               widths={[800, 1200, 1920]}
               sizes="100vw"
               loading="eager"
+              inferSize
             />
           </div>
         ))}
