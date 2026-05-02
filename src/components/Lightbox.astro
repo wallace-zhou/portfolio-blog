@@ -17,6 +17,8 @@ const photoData = photos.map((photo, index) => ({
   exif: photo.exif,
   index,
 }));
+
+const photoDataJson = JSON.stringify(photoData);
 ---
 
 <!-- Lightbox Modal -->
@@ -174,10 +176,8 @@ const photoData = photos.map((photo, index) => ({
   </div>
 </div>
 
-<!-- Store photo data for JavaScript -->
-<script define:vars={{ photoData }}>
-  window.__lightboxPhotos = photoData;
-</script>
+<!-- Photo list for JS: lives in swapped DOM so ClientRouter always exposes the current route's set -->
+<script type="application/json" id="lightbox-photo-data" is:inline set:html={photoDataJson} />
 
 <script>
   interface PhotoData {
@@ -205,6 +205,18 @@ const photoData = photos.map((photo, index) => ({
 
   function getLightboxEl(id: string) {
     return document.getElementById(id);
+  }
+
+  function syncLightboxPhotosFromDom(): void {
+    const el = document.getElementById('lightbox-photo-data');
+    const raw = el?.textContent?.trim();
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as PhotoData[];
+      (window as unknown as { __lightboxPhotos: PhotoData[] }).__lightboxPhotos = parsed;
+    } catch {
+      /* keep previous __lightboxPhotos */
+    }
   }
 
   function updateLightbox() {
@@ -275,6 +287,7 @@ const photoData = photos.map((photo, index) => ({
   }
 
   function openLightbox(photoId: string, visiblePhotoIds?: string[]) {
+    syncLightboxPhotosFromDom();
     allPhotos = (window as any).__lightboxPhotos || [];
     if (visiblePhotoIds && visiblePhotoIds.length > 0) {
       filteredPhotos = allPhotos.filter(p => visiblePhotoIds.includes(p.id));
@@ -380,6 +393,7 @@ const photoData = photos.map((photo, index) => ({
   });
 
   document.addEventListener('astro:page-load', () => {
+    syncLightboxPhotosFromDom();
     attachDocumentListeners();
     initLightboxElements();
   });
