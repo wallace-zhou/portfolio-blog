@@ -181,7 +181,8 @@
     "tags": [
       "Car"
     ],
-    "isHero": false
+    "isHero": true,
+    "order": 2
   },
   "2025-07-19-VGP/DSC_7534.jpg": {
     "title": "Vintage Grand Prix: Alpha Romeo Giulia Panning Shot",
@@ -189,7 +190,8 @@
     "tags": [
       "Car"
     ],
-    "isHero": false
+    "isHero": true,
+    "order": 3
   },
   "2025-08-01-DC/DSC03691.jpg": {
     "title": "Subways of DC",
@@ -197,7 +199,8 @@
     "tags": [
       "Street"
     ],
-    "isHero": false
+    "isHero": true,
+    "order": 7
   },
   "2025-12-20_Hawaii-Trip/DSC_8357.jpg": {
     "title": "Maui Whale Watching",
@@ -238,7 +241,7 @@
       "Landscape"
     ],
     "isHero": true,
-    "order": 2
+    "order": 4
   },
   "2025-12-20_Hawaii-Trip/DSC_8549.jpg": {
     "title": "Haleakala",
@@ -262,8 +265,7 @@
     "tags": [
       "Landscape"
     ],
-    "isHero": true,
-    "order": 7
+    "isHero": false
   },
   "2025-12-20_Hawaii-Trip/DSC_8597.jpg": {
     "title": "Haleakala",
@@ -287,8 +289,7 @@
     "tags": [
       "Landscape"
     ],
-    "isHero": true,
-    "order": 6
+    "isHero": false
   },
   "2025-12-20_Hawaii-Trip/DSC_8813.jpg": {
     "title": "Haleakala Sunsets",
@@ -320,8 +321,7 @@
     "tags": [
       "Landscape"
     ],
-    "isHero": true,
-    "order": 8
+    "isHero": false
   },
   "2025-12-20_Hawaii-Trip/DSC_8943.jpg": {
     "title": "Waianapanapa State Park",
@@ -353,8 +353,7 @@
     "tags": [
       "Landscape"
     ],
-    "isHero": true,
-    "order": 3
+    "isHero": false
   },
   "2025-12-20_Hawaii-Trip/DSC_9065.jpg": {
     "title": "Sunbathing Kitten",
@@ -371,7 +370,7 @@
       "Landscape"
     ],
     "isHero": true,
-    "order": 4
+    "order": 8
   },
   "2025-12-20_Hawaii-Trip/DSC_9072.jpg": {
     "title": "Sunbathing Kitten",
@@ -414,13 +413,14 @@
     "isHero": true,
     "order": 5
   },
-  "2025-12-20_Hawaii-Trip/DSC_9226.jpg": {
+  "2025-12-20_Hawaii-Trip/DSC_9273.jpg": {
     "title": "Mauna Kea Sunset",
     "location": "Hilo, HI",
     "tags": [
       "Landscape"
     ],
-    "isHero": false
+    "isHero": true,
+    "order": 6
   },
   "2025-12-20_Hawaii-Trip/DSC_9291.jpg": {
     "title": "Mauna Kea Sunset",

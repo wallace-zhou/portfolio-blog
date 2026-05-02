@@ -290,7 +290,11 @@ const photoDataJson = JSON.stringify(photoData);
     syncLightboxPhotosFromDom();
     allPhotos = (window as any).__lightboxPhotos || [];
     if (visiblePhotoIds && visiblePhotoIds.length > 0) {
-      filteredPhotos = allPhotos.filter(p => visiblePhotoIds.includes(p.id));
+      // Preserve the provided visual order instead of falling back to allPhotos order.
+      const photoById = new Map(allPhotos.map((photo) => [photo.id, photo]));
+      filteredPhotos = visiblePhotoIds
+        .map((id) => photoById.get(id))
+        .filter((photo): photo is PhotoData => Boolean(photo));
     } else {
       filteredPhotos = [...allPhotos];
     }
@@ -349,8 +353,26 @@ const photoDataJson = JSON.stringify(photoData);
       if (wrapper) {
         const photoId = wrapper.getAttribute('data-photo-id');
         if (photoId) {
-          const visibleItems = document.querySelectorAll('.gallery-item:not(.hidden) .gallery-image-wrapper');
-          const visibleIds = Array.from(visibleItems).map(el => el.getAttribute('data-photo-id')).filter(Boolean) as string[];
+          const visibleItems = Array.from(
+            document.querySelectorAll<HTMLElement>('.gallery-item:not(.hidden) .gallery-image-wrapper')
+          );
+
+          // Sort by rendered position so 1/x matches the visual top-left -> bottom-right order.
+          visibleItems.sort((a, b) => {
+            const rectA = a.getBoundingClientRect();
+            const rectB = b.getBoundingClientRect();
+            const rowTolerance = 4;
+
+            if (Math.abs(rectA.top - rectB.top) > rowTolerance) {
+              return rectA.top - rectB.top;
+            }
+
+            return rectA.left - rectB.left;
+          });
+
+          const visibleIds = visibleItems
+            .map((el) => el.getAttribute('data-photo-id'))
+            .filter((id): id is string => Boolean(id));
           openLightbox(photoId, visibleIds);
         }
       }

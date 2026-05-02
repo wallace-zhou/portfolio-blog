@@ -136,8 +136,8 @@ export const tagBannerPhotos: Record<PhotoTag | 'all', string> = {
   'all': '2025_Chicago/DSC_4517.jpg',
   'Landscape': '2025-12-20_Hawaii-Trip/DSC_8535.jpg',
   'Cityscape': '2025_Chicago/DSC_4517.jpg',
-  'Street': '2025-12-20_Hawaii-Trip/DSC_9035.jpg',
-  'Car': '2025-12-20_Hawaii-Trip/DSC_9068.jpg',
+  'Street': '2025-08-01-DC/DSC03691.jpg',
+  'Car': '2025-07-19-VGP/DSC_7534.jpg',
 };
 
 export function getBannerPhotoForTag(tag: PhotoTag | 'all'): string {
