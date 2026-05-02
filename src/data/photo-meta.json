@@ -1,50 +1,482 @@
 {
-  "blog-placeholder-1.jpg": {
-    "title": "Golden Hour Mountains",
-    "location": "Colorado, USA",
-    "tags": ["Landscape"],
-    "isHero": true
+  "2025_Chicago/DSC_4517.jpg": {
+    "title": "Chicago Skyline",
+    "location": "Chicago, IL",
+    "tags": [
+      "Cityscape"
+    ],
+    "isHero": true,
+    "order": 1
   },
-  "blog-placeholder-2.jpg": {
-    "title": "Alpine Road",
-    "location": "Eastern Sierra, California",
-    "tags": ["Landscape", "Street"],
-    "isHero": true
+  "2025-07-19-VGP/DSC_7421.jpg": {
+    "title": "Vintage Grand Prix: Porsche G-Body 911 Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": true,
+    "order": 2
   },
-  "blog-placeholder-3.jpg": {
-    "title": "Misty Forest",
-    "location": "Pacific Northwest",
-    "tags": ["Landscape"],
-    "isHero": true
+  "2025-07-19-VGP/DSC_7534.jpg": {
+    "title": "Vintage Grand Prix: Alpha Romeo Giulia Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": true,
+    "order": 3
   },
-  "blog-placeholder-4.jpg": {
-    "title": "Desert Canyon",
-    "location": "Utah, USA",
-    "tags": ["Landscape"],
-    "isHero": true
+  "2025-12-20_Hawaii-Trip/DSC_8535.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 4
   },
-  "blog-placeholder-6.jpg": {
-    "title": "Sunset Valley",
-    "location": "Arizona, USA",
-    "tags": ["Landscape"],
-    "isHero": true
+  "2025-12-20_Hawaii-Trip/DSC_9214.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 5
   },
-  "blog-placeholder-about.jpg": {
-    "title": "City Lights",
-    "location": "New York, USA",
-    "tags": ["Cityscape", "Street"],
-    "isHero": true
+  "2025-12-20_Hawaii-Trip/DSC_9273.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 6
   },
-  "DSC_4517.jpg": {
-    "title": "Ocean Panorama",
-    "location": "Big Sur, California",
-    "tags": ["Landscape"],
-    "isHero": true
+  "2025-08-01-DC/DSC03691.jpg": {
+    "title": "Subways of DC",
+    "location": "Washington, DC",
+    "tags": [
+      "Street"
+    ],
+    "isHero": true,
+    "order": 7
   },
-  "DSC_9074.jpg": {
-    "title": "Urban Exploration",
-    "location": "San Francisco, USA",
-    "tags": ["Street", "Cityscape"],
-    "isHero": true
+  "2025-12-20_Hawaii-Trip/DSC_9068.jpg": {
+    "title": "Sunbathing Kitten",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 8
+  },
+  "2025-07-19-VGP/DSC_4832.jpg": {
+    "title": "Vintage Grand Prix: Land Rover Defender 110",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_4834.jpg": {
+    "title": "Vintage Grand Prix: Land Rover Defender 90",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5360.jpg": {
+    "title": "Vintage Grand Prix: Porsche 911 Classic in Green",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5376.jpg": {
+    "title": "Vintage Grand Prix: Porsche 356 Replica",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5415.jpg": {
+    "title": "Vintage Grand Prix: Porsche 356 Replica Racing through Schenley Park",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5448.jpg": {
+    "title": "Vintage Grand Prix: Porsche 944 Racing through Schenley Park",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5452.jpg": {
+    "title": "Vintage Grand Prix: Porsche 944 Racing through Schenley Park",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5600.jpg": {
+    "title": "Vintage Grand Prix: Porsche 356 Replica Parade Lap",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5650.jpg": {
+    "title": "Vintage Grand Prix: Classic Punch Bug Lineup",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5652.jpg": {
+    "title": "Vintage Grand Prix: Classic Punch Bug Lineup",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5669.jpg": {
+    "title": "Vintage Grand Prix: BMW E82 1M in Valencia Orange",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5694.jpg": {
+    "title": "Vintage Grand Prix: Porsche 993 911 Carrera",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5699.jpg": {
+    "title": "Vintage Grand Prix: Singer Porsche Interior Details",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5700.jpg": {
+    "title": "Vintage Grand Prix: Singer Porsche Engine Bay",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5720.jpg": {
+    "title": "Vintage Grand Prix: Jaguar E-Types",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5738.jpg": {
+    "title": "Vintage Grand Prix: Lamborghini 350 GT",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_5741.jpg": {
+    "title": "Vintage Grand Prix: Lamborghini 350 GT",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_6061.jpg": {
+    "title": "Vintage Grand Prix: BMW E46 M3 on Track",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_6589.jpg": {
+    "title": "Vintage Grand Prix: Classics Class Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_6594.jpg": {
+    "title": "Vintage Grand Prix: Classics Class Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_6806.jpg": {
+    "title": "Vintage Grand Prix: Classics Class Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-07-19-VGP/DSC_7414.jpg": {
+    "title": "Vintage Grand Prix: Datsun 240Z Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8357.jpg": {
+    "title": "Maui Whale Watching",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8373.jpg": {
+    "title": "Maui Whale Watching",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8441.jpg": {
+    "title": "Coastlines of Maui",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8507.jpg": {
+    "title": "Coastal Trails of Maui",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8549.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8553.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8577.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8597.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8643.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8758.jpg": {
+    "title": "Haleakala Sunsets",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8813.jpg": {
+    "title": "Haleakala Sunsets",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8863.jpg": {
+    "title": "Mauna Kea Sunset Hikers",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8910.jpg": {
+    "title": "Island of Hawaii",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8912.jpg": {
+    "title": "Island of Hawaii",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8943.jpg": {
+    "title": "Waianapanapa State Park",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9001.jpg": {
+    "title": "Waianapanapa State Park",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9028.jpg": {
+    "title": "Waianapanapa State Park",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9035.jpg": {
+    "title": "Coastlines of Maui",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9065.jpg": {
+    "title": "Sunbathing Kitten",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9072.jpg": {
+    "title": "Sunbathing Kitten",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9074.jpg": {
+    "title": "Sunbathing Kitten",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9199.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9211-2.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9291.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9352.jpg": {
+    "title": "Coastlines of Island of Hawaii",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9374.jpg": {
+    "title": "Pretty Trees",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9421.jpg": {
+    "title": "Island of Hawaii",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9607.jpg": {
+    "title": "Volcano National Part Scenery",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": false
+  },
+  "2025_Chicago/_DSC4038.jpg": {
+    "title": "Chicago Architecture",
+    "location": "Chicago, IL",
+    "tags": [
+      "Cityscape"
+    ],
+    "isHero": false
   }
 }

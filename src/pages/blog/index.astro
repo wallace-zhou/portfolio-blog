@@ -7,6 +7,7 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import SidebarNav from '../../components/SidebarNav.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { getImageUrl } from '../../lib/images';
 
 const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
@@ -43,18 +44,17 @@ const posts = (await getCollection('blog')).sort(
 									index === 0 && "md:col-span-2"
 								]}>
 									<a href={`/blog/${post.id}/`} class="block">
-										{post.data.heroImage && (
-											<div class="overflow-hidden rounded-lg mb-4">
-												<Image 
-													width={index === 0 ? 1200 : 720} 
-													height={index === 0 ? 600 : 360} 
-													src={post.data.heroImage} 
-													alt=""
-													class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-													quality="mid"
-												/>
-											</div>
-										)}
+									{post.data.heroImage && (
+										<div class="overflow-hidden rounded-lg mb-4">
+											<Image 
+												src={getImageUrl(post.data.heroImage)} 
+												alt=""
+												class="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+												quality="mid"
+												inferSize
+											/>
+										</div>
+									)}
 										<div class="space-y-2">
 											<p class="text-label text-muted-foreground">
 												<FormattedDate date={post.data.pubDate} />

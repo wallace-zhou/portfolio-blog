@@ -1,6 +1,7 @@
 ---
-import type { PhotoMetadata, PhotoId } from '../data/photos';
+import type { PhotoMetadata } from '../data/photos';
 import { imageSources } from '../data/photos';
+import { getImageUrl } from '../lib/images';
 import { Image } from 'astro:assets';
 
 interface Props {
@@ -9,7 +10,6 @@ interface Props {
 
 const { photos } = Astro.props;
 
-// Pre-compute optimized image URLs for the lightbox
 const photoData = photos.map((photo, index) => ({
   id: photo.id,
   title: photo.title,
@@ -17,6 +17,8 @@ const photoData = photos.map((photo, index) => ({
   exif: photo.exif,
   index,
 }));
+
+const photoDataJson = JSON.stringify(photoData);
 ---
 
 <!-- Lightbox Modal -->
@@ -78,23 +80,28 @@ const photoData = photos.map((photo, index) => ({
   <!-- Main image container -->
   <div id="lightbox-image-container" class="absolute inset-0 flex items-center justify-center p-16 pb-24 md:p-20 md:pb-28 transition-all duration-300">
     <!-- Pre-rendered Astro Image components for each photo -->
-    {photos.map((photo) => (
-      <div 
-        id={`lightbox-image-${photo.id}`}
-        class="hidden w-full h-full flex items-center justify-center"
-        data-photo-id={photo.id}
-      >
-        <Image
-          src={imageSources[photo.id as PhotoId]}
-          alt={photo.title}
-          class="max-w-full max-h-full object-contain transition-opacity duration-300"
-          quality="high"
-          widths={[800, 1200, 1600, 2000]}
-          sizes="(max-width: 768px) 90vw, (max-width: 1024px) 80vw, 70vw"
-          loading="lazy"
-        />
-      </div>
-    ))}
+    {photos.map((photo) => {
+      const r2Path = imageSources[photo.id];
+      const imageUrl = r2Path ? getImageUrl(r2Path) : '';
+      return imageUrl ? (
+        <div 
+          id={`lightbox-image-${photo.id}`}
+          class="hidden w-full h-full flex items-center justify-center"
+          data-photo-id={photo.id}
+        >
+          <Image
+            src={imageUrl}
+            alt={photo.title}
+            class="max-w-full max-h-full object-contain transition-opacity duration-300"
+            quality="high"
+            widths={[800, 1200, 1600, 2000]}
+            sizes="(max-width: 768px) 90vw, (max-width: 1024px) 80vw, 70vw"
+            loading="lazy"
+            inferSize
+          />
+        </div>
+      ) : null;
+    })}
   </div>
 
   <!-- Title and location overlay (bottom left) -->
@@ -169,10 +176,8 @@ const photoData = photos.map((photo, index) => ({
   </div>
 </div>
 
-<!-- Store photo data for JavaScript -->
-<script define:vars={{ photoData }}>
-  window.__lightboxPhotos = photoData;
-</script>
+<!-- Photo list for JS: lives in swapped DOM so ClientRouter always exposes the current route's set -->
+<script type="application/json" id="lightbox-photo-data" is:inline set:html={photoDataJson} />
 
 <script>
   interface PhotoData {
@@ -200,6 +205,18 @@ const photoData = photos.map((photo, index) => ({
 
   function getLightboxEl(id: string) {
     return document.getElementById(id);
+  }
+
+  function syncLightboxPhotosFromDom(): void {
+    const el = document.getElementById('lightbox-photo-data');
+    const raw = el?.textContent?.trim();
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as PhotoData[];
+      (window as unknown as { __lightboxPhotos: PhotoData[] }).__lightboxPhotos = parsed;
+    } catch {
+      /* keep previous __lightboxPhotos */
+    }
   }
 
   function updateLightbox() {
@@ -270,9 +287,14 @@ const photoData = photos.map((photo, index) => ({
   }
 
   function openLightbox(photoId: string, visiblePhotoIds?: string[]) {
+    syncLightboxPhotosFromDom();
     allPhotos = (window as any).__lightboxPhotos || [];
     if (visiblePhotoIds && visiblePhotoIds.length > 0) {
-      filteredPhotos = allPhotos.filter(p => visiblePhotoIds.includes(p.id));
+      // Preserve the provided visual order instead of falling back to allPhotos order.
+      const photoById = new Map(allPhotos.map((photo) => [photo.id, photo]));
+      filteredPhotos = visiblePhotoIds
+        .map((id) => photoById.get(id))
+        .filter((photo): photo is PhotoData => Boolean(photo));
     } else {
       filteredPhotos = [...allPhotos];
     }
@@ -331,8 +353,26 @@ const photoData = photos.map((photo, index) => ({
       if (wrapper) {
         const photoId = wrapper.getAttribute('data-photo-id');
         if (photoId) {
-          const visibleItems = document.querySelectorAll('.gallery-item:not(.hidden) .gallery-image-wrapper');
-          const visibleIds = Array.from(visibleItems).map(el => el.getAttribute('data-photo-id')).filter(Boolean) as string[];
+          const visibleItems = Array.from(
+            document.querySelectorAll<HTMLElement>('.gallery-item:not(.hidden) .gallery-image-wrapper')
+          );
+
+          // Sort by rendered position so 1/x matches the visual top-left -> bottom-right order.
+          visibleItems.sort((a, b) => {
+            const rectA = a.getBoundingClientRect();
+            const rectB = b.getBoundingClientRect();
+            const rowTolerance = 4;
+
+            if (Math.abs(rectA.top - rectB.top) > rowTolerance) {
+              return rectA.top - rectB.top;
+            }
+
+            return rectA.left - rectB.left;
+          });
+
+          const visibleIds = visibleItems
+            .map((el) => el.getAttribute('data-photo-id'))
+            .filter((id): id is string => Boolean(id));
           openLightbox(photoId, visibleIds);
         }
       }
@@ -375,6 +415,7 @@ const photoData = photos.map((photo, index) => ({
   });
 
   document.addEventListener('astro:page-load', () => {
+    syncLightboxPhotosFromDom();
     attachDocumentListeners();
     initLightboxElements();
   });

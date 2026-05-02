@@ -9,6 +9,9 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://example.com',
 	integrations: [mdx(), sitemap()],
+	image: {
+		domains: ['images.wallacez.com'],
+	},
 	vite: {
 		plugins: [tailwindcss()],
 	},

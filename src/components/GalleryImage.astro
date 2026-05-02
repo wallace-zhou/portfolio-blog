@@ -1,7 +1,8 @@
 ---
 import { Image } from 'astro:assets';
-import type { PhotoMetadata, PhotoId } from '../data/photos';
+import type { PhotoMetadata } from '../data/photos';
 import { imageSources } from '../data/photos';
+import { getImageUrl } from '../lib/images';
 
 interface Props {
   photo: PhotoMetadata;
@@ -13,25 +14,27 @@ interface Props {
 
 const { photo, index, class: className = '', loading = 'lazy', sizes = '33vw' } = Astro.props;
 
-const imageSrc = imageSources[photo.id as PhotoId];
+const r2Path = imageSources[photo.id];
+const imageUrl = r2Path ? getImageUrl(r2Path) : '';
 ---
 
+{imageUrl && (
 <div 
   class:list={['gallery-image-wrapper group cursor-pointer relative overflow-hidden', className]}
   data-photo-id={photo.id}
   data-photo-index={index}
 >
   <Image
-    src={imageSrc}
+    src={imageUrl}
     alt={photo.title}
     class="w-full h-auto transition-transform duration-700 group-hover:scale-105"
     quality="high"
     widths={[400, 800, 1200, 1600, 2000]}
     sizes={sizes}
     loading={loading}
+    inferSize
   />
   
-  <!-- Hover overlay - dark gradient bar at bottom -->
   <div class="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
     <div class="absolute bottom-0 left-0 right-0 p-4">
       <h3 class="text-white text-sm font-medium truncate">{photo.title}</h3>
@@ -39,12 +42,11 @@ const imageSrc = imageSources[photo.id as PhotoId];
     </div>
   </div>
 </div>
+)}
 
 <style>
   .gallery-image-wrapper {
-    /* Ensure image fills container properly */
     display: block;
-    /* Contain intrinsic size helps browser with layout before image loads */
     contain: layout style;
   }
   
@@ -52,7 +54,6 @@ const imageSrc = imageSources[photo.id as PhotoId];
     display: block;
     width: 100%;
     height: auto;
-    /* Ensure image doesn't cause layout shifts */
     content-visibility: auto;
   }
 </style>
