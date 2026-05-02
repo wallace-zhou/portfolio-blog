@@ -10,7 +10,7 @@ export default defineConfig({
 	site: 'https://example.com',
 	integrations: [mdx(), sitemap()],
 	image: {
-		domains: ['pub-f961630767af4c0ea45eb8ae6ca8cc3a.r2.dev'],
+		domains: ['images.wallacez.com'],
 	},
 	vite: {
 		plugins: [tailwindcss()],
