@@ -1,4 +1,76 @@
 {
+  "2025_Chicago/DSC_4517.jpg": {
+    "title": "Chicago Skyline",
+    "location": "Chicago, IL",
+    "tags": [
+      "Cityscape"
+    ],
+    "isHero": true,
+    "order": 1
+  },
+  "2025-07-19-VGP/DSC_7421.jpg": {
+    "title": "Vintage Grand Prix: Porsche G-Body 911 Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": true,
+    "order": 2
+  },
+  "2025-07-19-VGP/DSC_7534.jpg": {
+    "title": "Vintage Grand Prix: Alpha Romeo Giulia Panning Shot",
+    "location": "Pittsburgh, PA",
+    "tags": [
+      "Car"
+    ],
+    "isHero": true,
+    "order": 3
+  },
+  "2025-12-20_Hawaii-Trip/DSC_8535.jpg": {
+    "title": "Haleakala",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 4
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9214.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 5
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9273.jpg": {
+    "title": "Mauna Kea Sunset",
+    "location": "Hilo, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 6
+  },
+  "2025-08-01-DC/DSC03691.jpg": {
+    "title": "Subways of DC",
+    "location": "Washington, DC",
+    "tags": [
+      "Street"
+    ],
+    "isHero": true,
+    "order": 7
+  },
+  "2025-12-20_Hawaii-Trip/DSC_9068.jpg": {
+    "title": "Sunbathing Kitten",
+    "location": "Maui, HI",
+    "tags": [
+      "Landscape"
+    ],
+    "isHero": true,
+    "order": 8
+  },
   "2025-07-19-VGP/DSC_4832.jpg": {
     "title": "Vintage Grand Prix: Land Rover Defender 110",
     "location": "Pittsburgh, PA",
@@ -175,33 +247,6 @@
     ],
     "isHero": false
   },
-  "2025-07-19-VGP/DSC_7421.jpg": {
-    "title": "Vintage Grand Prix: Porsche G-Body 911 Panning Shot",
-    "location": "Pittsburgh, PA",
-    "tags": [
-      "Car"
-    ],
-    "isHero": true,
-    "order": 2
-  },
-  "2025-07-19-VGP/DSC_7534.jpg": {
-    "title": "Vintage Grand Prix: Alpha Romeo Giulia Panning Shot",
-    "location": "Pittsburgh, PA",
-    "tags": [
-      "Car"
-    ],
-    "isHero": true,
-    "order": 3
-  },
-  "2025-08-01-DC/DSC03691.jpg": {
-    "title": "Subways of DC",
-    "location": "Washington, DC",
-    "tags": [
-      "Street"
-    ],
-    "isHero": true,
-    "order": 7
-  },
   "2025-12-20_Hawaii-Trip/DSC_8357.jpg": {
     "title": "Maui Whale Watching",
     "location": "Maui, HI",
@@ -233,15 +278,6 @@
       "Landscape"
     ],
     "isHero": false
-  },
-  "2025-12-20_Hawaii-Trip/DSC_8535.jpg": {
-    "title": "Haleakala",
-    "location": "Maui, HI",
-    "tags": [
-      "Landscape"
-    ],
-    "isHero": true,
-    "order": 4
   },
   "2025-12-20_Hawaii-Trip/DSC_8549.jpg": {
     "title": "Haleakala",
@@ -363,15 +399,6 @@
     ],
     "isHero": false
   },
-  "2025-12-20_Hawaii-Trip/DSC_9068.jpg": {
-    "title": "Sunbathing Kitten",
-    "location": "Maui, HI",
-    "tags": [
-      "Landscape"
-    ],
-    "isHero": true,
-    "order": 8
-  },
   "2025-12-20_Hawaii-Trip/DSC_9072.jpg": {
     "title": "Sunbathing Kitten",
     "location": "Maui, HI",
@@ -403,24 +430,6 @@
       "Landscape"
     ],
     "isHero": false
-  },
-  "2025-12-20_Hawaii-Trip/DSC_9214.jpg": {
-    "title": "Mauna Kea Sunset",
-    "location": "Hilo, HI",
-    "tags": [
-      "Landscape"
-    ],
-    "isHero": true,
-    "order": 5
-  },
-  "2025-12-20_Hawaii-Trip/DSC_9273.jpg": {
-    "title": "Mauna Kea Sunset",
-    "location": "Hilo, HI",
-    "tags": [
-      "Landscape"
-    ],
-    "isHero": true,
-    "order": 6
   },
   "2025-12-20_Hawaii-Trip/DSC_9291.jpg": {
     "title": "Mauna Kea Sunset",
@@ -461,15 +470,6 @@
       "Landscape"
     ],
     "isHero": false
-  },
-  "2025_Chicago/DSC_4517.jpg": {
-    "title": "Chicago Skyline",
-    "location": "Chicago, IL",
-    "tags": [
-      "Cityscape"
-    ],
-    "isHero": true,
-    "order": 1
   },
   "2025_Chicago/_DSC4038.jpg": {
     "title": "Chicago Architecture",
